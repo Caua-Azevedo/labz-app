@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("NUTRITIONIST")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  patients     Patient[]
+  appointments Appointment[]
+  diets        Diet[]
+}
+
+model Patient {
+  id          String   @id @default(cuid())
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name        String
+  email       String?
+  phone       String?
+  goal        String?
+  adherence   Int      @default(0)
+  currentWeight Float?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  appointments Appointment[]
+  diets       Diet[]
+  @@index([ownerId])
+}
+
+model Appointment {
+  id        String   @id @default(cuid())
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  startsAt  DateTime
+  type      String
+  valueCents Int     @default(0)
+  status    String   @default("scheduled")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([ownerId, startsAt])
+}
+
+model Diet {
+  id          String   @id @default(cuid())
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  patientId   String?
+  patient     Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
+  name        String
+  calories    Int?
+  waterLiters Float?
+  notes       String?
+  isTemplate  Boolean  @default(false)
+  meals       Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([ownerId])
+}
