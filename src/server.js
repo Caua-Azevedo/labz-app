@@ -28,7 +28,10 @@ async function auth(req,res,next){
     req.user=user; next();
   }catch{ return res.status(401).json({error:'Sessão expirada'}); }
 }
-const safeUser=u=>({id:u.id,name:u.name,email:u.email,role:u.role});
+const safeUser=u=>({
+  id:u.id,name:u.name,email:u.email,role:u.role,
+  crn:u.crn||'',phone:u.phone||'',clinicName:u.clinicName||''
+});
 const patientOut=p=>({...p,start:p.createdAt.toLocaleDateString('pt-BR')});
 const appointmentOut=a=>({
   id:a.id,patientId:a.patientId,date:a.startsAt.toISOString().slice(0,10),time:a.startsAt.toISOString().slice(11,16),
@@ -37,12 +40,27 @@ const appointmentOut=a=>({
 const dietOut=d=>({id:d.id,patientId:d.patientId,name:d.name,calories:d.calories,water:d.waterLiters,notes:d.notes||'',isTemplate:d.isTemplate,meals:d.meals||[],updatedAt:d.updatedAt});
 
 app.post('/api/auth/register', async(req,res)=>{
-  const parsed=z.object({name:z.string().min(2),email:z.string().email(),password:z.string().min(8)}).safeParse(req.body);
-  if(!parsed.success) return res.status(400).json({error:'Dados de cadastro inválidos'});
+  const parsed=z.object({
+    name:z.string().trim().min(2,'Nome muito curto').max(120),
+    email:z.string().trim().email(),
+    password:z.string().min(8).max(128),
+    crn:z.string().trim().max(40).optional().default(''),
+    phone:z.string().trim().max(30).optional().default(''),
+    clinicName:z.string().trim().max(120).optional().default('')
+  }).safeParse(req.body);
+  if(!parsed.success) return res.status(400).json({error:'Confira nome, e-mail e senha. A senha deve ter pelo menos 8 caracteres.'});
   const email=parsed.data.email.toLowerCase();
-  if(await prisma.user.findUnique({where:{email}})) return res.status(409).json({error:'E-mail já cadastrado'});
-  const user=await prisma.user.create({data:{name:parsed.data.name,email,passwordHash:await bcrypt.hash(parsed.data.password,12)}});
-  setAuthCookie(res,sign(user)); res.status(201).json({user:safeUser(user)});
+  if(await prisma.user.findUnique({where:{email}})) return res.status(409).json({error:'Já existe uma conta com este e-mail'});
+  const user=await prisma.user.create({data:{
+    name:parsed.data.name,
+    email,
+    passwordHash:await bcrypt.hash(parsed.data.password,12),
+    crn:parsed.data.crn||null,
+    phone:parsed.data.phone||null,
+    clinicName:parsed.data.clinicName||null
+  }});
+  setAuthCookie(res,sign(user));
+  res.status(201).json({user:safeUser(user)});
 });
 app.post('/api/auth/login', async(req,res)=>{
   const parsed=z.object({email:z.string().email(),password:z.string().min(1)}).safeParse(req.body);
@@ -53,6 +71,26 @@ app.post('/api/auth/login', async(req,res)=>{
 });
 app.post('/api/auth/logout',(req,res)=>{res.clearCookie('labz_session');res.status(204).end();});
 app.get('/api/auth/me',auth,(req,res)=>res.json(safeUser(req.user)));
+
+app.put('/api/auth/profile',auth,async(req,res)=>{
+  const parsed=z.object({
+    name:z.string().trim().min(2).max(120),
+    crn:z.string().trim().max(40).optional().default(''),
+    phone:z.string().trim().max(30).optional().default(''),
+    clinicName:z.string().trim().max(120).optional().default('')
+  }).safeParse(req.body);
+  if(!parsed.success) return res.status(400).json({error:'Dados do perfil inválidos'});
+  const user=await prisma.user.update({
+    where:{id:req.user.id},
+    data:{
+      name:parsed.data.name,
+      crn:parsed.data.crn||null,
+      phone:parsed.data.phone||null,
+      clinicName:parsed.data.clinicName||null
+    }
+  });
+  res.json({user:safeUser(user)});
+});
 
 app.get('/api/patients',auth,async(req,res)=>{
   const rows=await prisma.patient.findMany({where:{ownerId:req.user.id},orderBy:{createdAt:'desc'}}); res.json(rows.map(patientOut));
