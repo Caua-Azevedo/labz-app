@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Labz — o consultório de nutrição em um só lugar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16241F;
+    --ink-soft:#2B3B33;
+    --paper:#F3F4EF;
+    --paper-dim:#E7E9E0;
+    --mango:#E8A33D;
+    --mango-deep:#C87F1F;
+    --paprika:#D2492C;
+    --sage:#7C9473;
+    --line: rgba(22,36,31,0.12);
+    --shadow: 0 18px 40px rgba(22,36,31,0.14);
+  }
+
+  *{box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+
+  h1,h2,h3,.display-font{
+    font-family:'Fraunces', serif;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+
+  a{ text-decoration:none; color:inherit; }
+
+  .container-narrow{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* ---------- NAV ---------- */
+  .labz-nav{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:rgba(243,244,239,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .labz-nav .container-narrow{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-top:16px;
+    padding-bottom:16px;
+  }
+  .labz-wordmark{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.5rem;
+    color:var(--ink);
+  }
+  .labz-wordmark span{ color:var(--mango-deep); }
+  .labz-links{
+    display:flex;
+    gap:32px;
+    align-items:center;
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+  .labz-links a{
+    font-size:0.95rem;
+    font-weight:500;
+    color:var(--ink-soft);
+    padding-bottom:4px;
+    border-bottom:2px solid transparent;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .labz-links a.active,
+  .labz-links a:hover{
+    color:var(--ink);
+    border-color:var(--mango);
+  }
+  .btn-labz{
+    background:var(--ink);
+    color:var(--paper) !important;
+    border-radius:999px;
+    padding:10px 22px;
+    font-weight:600;
+    font-size:0.9rem;
+    display:inline-block;
+    transition:background .2s ease, transform .2s ease;
+  }
+  .btn-labz:hover{ background:var(--mango-deep); color:var(--ink) !important; transform:translateY(-1px); }
+  .btn-outline-labz{
+    border:1.5px solid var(--ink);
+    color:var(--ink) !important;
+    border-radius:999px;
+    padding:9px 20px;
+    font-weight:600;
+    font-size:0.9rem;
+    display:inline-block;
+    transition:background .2s ease, color .2s ease;
+  }
+  .btn-outline-labz:hover{ background:var(--ink); color:var(--paper) !important; }
+
+  .nav-toggle{
+    display:none;
+    background:none;
+    border:none;
+    font-size:1.6rem;
+    color:var(--ink);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:76px 0 96px;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:56px;
+    align-items:center;
+  }
+  .hero-eyebrow{
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--paprika);
+    margin-bottom:14px;
+  }
+  .hero h1{
+    font-size:3.1rem;
+    font-weight:600;
+    line-height:1.08;
+    margin-bottom:22px;
+    max-width:11ch;
+  }
+  .hero p.lead-text{
+    font-size:1.1rem;
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin-bottom:32px;
+  }
+  .hero-actions{ display:flex; gap:14px; flex-wrap:wrap; }
+
+  /* dashboard mockup */
+  .mock-card{
+    background:#fff;
+    border-radius:20px;
+    box-shadow:var(--shadow);
+    padding:22px;
+    position:relative;
+  }
+  .mock-card-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+  }
+  .mock-card-head span.dot{
+    width:9px; height:9px; border-radius:50%; background:var(--sage); display:inline-block; margin-right:6px;
+  }
+  .mock-title{ font-size:0.8rem; font-weight:600; color:var(--ink-soft); text-transform:none; }
+  .mock-tabs{ display:flex; gap:6px; }
+  .mock-tab{
+    font-size:0.75rem;
+    font-weight:600;
+    padding:6px 12px;
+    border-radius:999px;
+    color:var(--ink-soft);
+    background:var(--paper-dim);
+    border:none;
+    cursor:pointer;
+    transition:background .2s ease, color .2s ease;
+  }
+  .mock-tab.active{ background:var(--ink); color:var(--paper); }
+
+  .mock-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .mock-row:last-child{ border-bottom:none; }
+  .mock-patient{ display:flex; align-items:center; gap:10px; }
+  .mock-avatar{
+    width:34px; height:34px; border-radius:50%;
+    background:linear-gradient(135deg, var(--mango), var(--paprika));
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:700; font-size:0.8rem;
+  }
+  .mock-name{ font-size:0.88rem; font-weight:600; }
+  .mock-sub{ font-size:0.76rem; color:var(--ink-soft); }
+  .mock-bar-track{ width:80px; height:6px; background:var(--paper-dim); border-radius:6px; overflow:hidden; }
+  .mock-bar-fill{ height:100%; background:var(--sage); border-radius:6px; }
+
+  .mock-stats-row{ display:flex; gap:16px; margin-top:18px; }
+  .mock-ring{
+    width:78px; height:78px; border-radius:50%;
+    background:conic-gradient(var(--mango) 0% 82%, var(--paper-dim) 82% 100%);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .mock-ring-inner{
+    width:56px; height:56px; border-radius:50%; background:#fff;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .mock-ring-inner strong{ font-size:0.95rem; line-height:1; }
+  .mock-ring-inner small{ font-size:0.6rem; color:var(--ink-soft); }
+  .mock-fin{ flex:1; }
+  .mock-fin-label{ font-size:0.75rem; color:var(--ink-soft); margin-bottom:6px; }
+  .mock-fin-value{ font-family:'Fraunces', serif; font-size:1.5rem; font-weight:600; }
+  .mock-fin-bars{ display:flex; align-items:flex-end; gap:4px; height:34px; margin-top:8px; }
+  .mock-fin-bars i{ width:6px; background:var(--paprika); border-radius:3px; display:block; opacity:.75; }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{ padding:88px 0; }
+  .section-tag{
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--paprika);
+    margin-bottom:10px;
+  }
+  .section-title{
+    font-size:2.1rem;
+    font-weight:600;
+    max-width:20ch;
+    margin-bottom:16px;
+  }
+  .section-desc{
+    color:var(--ink-soft);
+    max-width:56ch;
+    font-size:1.03rem;
+  }
+
+  /* ---------- PROBLEM ---------- */
+  .problem-section{ background:var(--paper-dim); }
+  .problem-list{ margin-top:44px; display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+  .problem-item{
+    background:var(--paper);
+    border-radius:18px;
+    padding:28px 26px;
+    border:1px solid var(--line);
+  }
+  .problem-item h3{ font-size:1.15rem; font-weight:600; margin-bottom:10px; }
+  .problem-item p{ color:var(--ink-soft); font-size:0.95rem; margin:0; }
+
+  /* ---------- FEATURES ---------- */
+  .feature-row{
+    display:grid;
+    grid-template-columns:0.9fr 1.1fr;
+    gap:52px;
+    align-items:center;
+    padding:46px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .feature-row:last-child{ border-bottom:none; }
+  .feature-row.reverse{ grid-template-columns:1.1fr 0.9fr; }
+  .feature-row.reverse .feature-visual{ order:2; }
+  .feature-row.reverse .feature-text{ order:1; }
+  .feature-badge{
+    font-size:0.78rem; font-weight:700; color:var(--paprika);
+    margin-bottom:10px;
+  }
+  .feature-text h3{ font-size:1.6rem; font-weight:600; margin-bottom:12px; max-width:16ch; }
+  .feature-text p{ color:var(--ink-soft); max-width:44ch; }
+  .feature-visual{
+    background:#fff;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:24px;
+    min-height:180px;
+  }
+
+  .fv-list .fv-row{ display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed var(--line); font-size:0.88rem; }
+  .fv-list .fv-row:last-child{ border-bottom:none; }
+  .fv-tagbox{ display:flex; gap:8px; flex-wrap:wrap; }
+  .fv-tag{ background:var(--paper-dim); border-radius:999px; padding:6px 14px; font-size:0.8rem; font-weight:600; }
+  .fv-chart{ display:flex; align-items:flex-end; gap:8px; height:110px; }
+  .fv-chart i{ flex:1; background:var(--sage); border-radius:6px 6px 0 0; opacity:.85; }
+  .fv-leader{ display:flex; align-items:center; justify-content:space-between; padding:8px 0; font-size:0.88rem; }
+  .fv-leader b{ color:var(--mango-deep); }
+  .fv-patient-card{ border:1px solid var(--line); border-radius:14px; padding:16px; }
+  .fv-patient-card .mock-ring{ margin:0 auto 10px; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps-section{ background:var(--ink); color:var(--paper); }
+  .steps-section .section-tag{ color:var(--mango); }
+  .steps-section .section-title{ color:var(--paper); }
+  .steps-section .section-desc{ color:#C9D0CA; }
+  .steps-grid{
+    margin-top:48px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:20px;
+  }
+  .step-card{
+    background:rgba(243,244,239,0.06);
+    border:1px solid rgba(243,244,239,0.16);
+    border-radius:16px;
+    padding:22px 18px;
+    position:relative;
+  }
+  .step-num{
+    font-family:'Fraunces', serif;
+    font-size:1.6rem;
+    font-weight:600;
+    color:var(--mango);
+    margin-bottom:14px;
+    display:block;
+  }
+  .step-card h4{ font-size:1rem; font-weight:600; margin-bottom:8px; }
+  .step-card p{ font-size:0.85rem; color:#C9D0CA; margin:0; }
+
+  /* ---------- CHALLENGES SPOTLIGHT ---------- */
+  .challenge-section{
+    background:linear-gradient(160deg, #1E3128 0%, #16241F 60%);
+    color:var(--paper);
+  }
+  .challenge-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:56px;
+    align-items:center;
+  }
+  .challenge-grid .section-tag{ color:var(--mango); }
+  .challenge-grid h2{ color:var(--paper); font-size:2.1rem; max-width:14ch; }
+  .challenge-grid p{ color:#C9D0CA; max-width:42ch; }
+  .leaderboard{
+    background:rgba(243,244,239,0.06);
+    border:1px solid rgba(243,244,239,0.16);
+    border-radius:18px;
+    padding:22px 24px;
+  }
+  .leaderboard-title{ font-size:0.8rem; font-weight:600; color:#C9D0CA; margin-bottom:14px; }
+  .lb-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 0; border-bottom:1px solid rgba(243,244,239,0.12);
+    font-size:0.92rem;
+  }
+  .lb-row:last-child{ border-bottom:none; }
+  .lb-pos{
+    width:24px; height:24px; border-radius:50%; background:var(--mango); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; margin-right:10px;
+  }
+  .lb-pos.second{ background:#9FB3A6; }
+  .lb-pos.third{ background:#6C7C71; color:#fff; }
+  .lb-name{ display:flex; align-items:center; }
+  .lb-score{ color:var(--mango); font-weight:600; }
+
+  /* ---------- TEAM ---------- */
+  .team-grid{ margin-top:44px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; }
+  .team-card{
+    background:#fff;
+    border-radius:18px;
+    padding:26px;
+    border:1px solid var(--line);
+  }
+  .team-role{ font-size:0.78rem; font-weight:700; color:var(--paprika); margin-bottom:6px; }
+  .team-card h3{ font-size:1.2rem; font-weight:600; margin-bottom:6px; }
+  .team-card p{ color:var(--ink-soft); font-size:0.9rem; margin:0; }
+
+  /* ---------- CTA ---------- */
+  .cta-section{
+    background:var(--mango);
+  }
+  .cta-box{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:30px;
+    flex-wrap:wrap;
+  }
+  .cta-box h2{ font-size:2rem; max-width:16ch; margin:0; color:var(--ink); }
+  .btn-cta-dark{
+    background:var(--ink);
+    color:var(--paper) !important;
+    border-radius:999px;
+    padding:14px 30px;
+    font-weight:600;
+    display:inline-block;
+    white-space:nowrap;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--ink);
+    color:#C9D0CA;
+    padding:44px 0 30px;
+    font-size:0.88rem;
+  }
+  footer .footer-top{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px;
+    padding-bottom:24px; border-bottom:1px solid rgba(243,244,239,0.14);
+    margin-bottom:20px;
+  }
+  footer .labz-wordmark{ color:var(--paper); }
+  footer .labz-wordmark span{ color:var(--mango); }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 991px){
+    .labz-links{
+      position:absolute;
+      top:100%; left:0; right:0;
+      background:var(--paper);
+      flex-direction:column;
+      align-items:flex-start;
+      padding:20px 24px;
+      gap:16px;
+      border-bottom:1px solid var(--line);
+      display:none;
+    }
+    .labz-links.show{ display:flex; }
+    .nav-toggle{ display:block; }
+    .hero-grid{ grid-template-columns:1fr; }
+    .hero h1{ font-size:2.3rem; max-width:none; }
+    .problem-list{ grid-template-columns:1fr; }
+    .feature-row, .feature-row.reverse{ grid-template-columns:1fr; }
+    .feature-row.reverse .feature-visual, .feature-row.reverse .feature-text{ order:initial; }
+    .steps-grid{ grid-template-columns:repeat(2,1fr); }
+    .challenge-grid{ grid-template-columns:1fr; }
+    .team-grid{ grid-template-columns:1fr; }
+    .cta-box{ flex-direction:column; align-items:flex-start; }
+  }
+
+
+  /* ---------- APP MVP ---------- */
+  .app-shell{display:none;min-height:100vh;background:#EEF0E9;}
+  .app-shell.active{display:flex;}
+  .app-sidebar{width:248px;background:var(--ink);color:var(--paper);padding:24px 18px;position:fixed;inset:0 auto 0 0;}
+  .app-brand{font-family:'Fraunces',serif;font-size:1.65rem;font-weight:700;padding:2px 12px 24px;}
+  .app-brand span{color:var(--mango);}
+  .app-nav{display:flex;flex-direction:column;gap:7px;}
+  .app-nav button{border:0;background:transparent;color:#C9D0CA;text-align:left;border-radius:12px;padding:11px 13px;font-weight:600;cursor:pointer;}
+  .app-nav button:hover,.app-nav button.active{background:rgba(243,244,239,.10);color:#fff;}
+  .app-sidebar-bottom{position:absolute;left:18px;right:18px;bottom:24px;}
+  .app-user{border-top:1px solid rgba(243,244,239,.12);padding-top:16px;font-size:.9rem;color:#C9D0CA;}
+  .app-main{margin-left:248px;width:calc(100% - 248px);padding:30px;}
+  .app-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:20px;}
+  .app-topbar h1{font-size:2rem;margin:0;}
+  .app-topbar p{margin:3px 0 0;color:var(--ink-soft);}
+  .app-primary{border:0;background:var(--ink);color:#fff;border-radius:999px;padding:11px 18px;font-weight:700;cursor:pointer;}
+  .app-secondary{border:1px solid var(--line);background:white;color:var(--ink);border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px;}
+  .stat-card,.panel-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 24px rgba(22,36,31,.06);}
+  .stat-card small{color:var(--ink-soft);display:block;margin-bottom:7px;}
+  .stat-card strong{font-family:'Fraunces',serif;font-size:1.7rem;}
+  .stat-card em{font-style:normal;font-size:.78rem;color:var(--sage);font-weight:700;margin-left:6px;}
+  .panel-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:18px;}
+  .panel-card h3{font-size:1.15rem;margin:0 0 14px;}
+  .app-table{width:100%;border-collapse:collapse;}
+  .app-table th{font-size:.78rem;color:var(--ink-soft);text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);}
+  .app-table td{padding:13px 8px;border-bottom:1px solid var(--line);font-size:.91rem;}
+  .app-table tr:last-child td{border-bottom:none;}
+  .status-pill{display:inline-block;border-radius:999px;padding:5px 9px;background:var(--paper-dim);font-size:.75rem;font-weight:700;}
+  .status-pill.ok{background:#E1EADF;color:#43613D;}
+  .app-view{display:none;}
+  .app-view.active{display:block;}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--ink-soft);}
+  .login-overlay{position:fixed;inset:0;background:rgba(22,36,31,.72);backdrop-filter:blur(8px);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px;}
+  .login-overlay.active{display:flex;}
+  .login-card{width:min(440px,100%);background:var(--paper);border-radius:24px;padding:30px;box-shadow:var(--shadow);}
+  .login-card h2{font-size:2rem;margin-bottom:8px;}
+  .login-card p{color:var(--ink-soft);margin-bottom:20px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:.82rem;font-weight:700;margin-bottom:6px;}
+  .field input{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;outline:none;}
+  .field input:focus{border-color:var(--sage);}
+  .login-actions{display:flex;gap:10px;margin-top:18px;}
+  .patient-toolbar{display:flex;justify-content:space-between;gap:12px;margin-bottom:16px;}
+  .patient-toolbar input{flex:1;border:1px solid var(--line);border-radius:999px;padding:11px 15px;background:white;}
+  .modal-labz{position:fixed;inset:0;background:rgba(22,36,31,.55);z-index:3200;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-labz.active{display:flex;}
+  .modal-card{width:min(520px,100%);background:var(--paper);border-radius:22px;padding:26px;box-shadow:var(--shadow);}
+  .modal-card h3{font-size:1.55rem;margin-bottom:18px;}
+  .two-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width: 900px){
+    .app-sidebar{width:78px;padding:20px 10px}.app-brand{font-size:1.2rem;padding-left:8px}.app-nav button{font-size:0;padding:12px}.app-nav button::first-letter{font-size:1rem}.app-user{display:none}.app-main{margin-left:78px;width:calc(100% - 78px);padding:20px}.stat-grid{grid-template-columns:repeat(2,1fr)}.panel-grid{grid-template-columns:1fr}.two-fields{grid-template-columns:1fr}
+  }
+
+
+  .patient-name-btn{border:0;background:transparent;padding:0;color:var(--ink);font-weight:700;cursor:pointer;text-align:left;}
+  .patient-name-btn:hover{text-decoration:underline;text-decoration-color:var(--mango);text-underline-offset:3px;}
+  .profile-header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px;}
+  .profile-heading{display:flex;align-items:center;gap:14px;}
+  .profile-avatar{width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,var(--mango),var(--paprika));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.05rem;}
+  .profile-meta{color:var(--ink-soft);font-size:.9rem;}
+  .profile-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .profile-tabs button{border:1px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:999px;padding:9px 14px;font-weight:700;cursor:pointer;}
+  .profile-tabs button.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .profile-panel{display:none;}
+  .profile-panel.active{display:block;}
+  .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .profile-grid.three{grid-template-columns:repeat(3,1fr);}
+  .metric-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;}
+  .metric-card small{display:block;color:var(--ink-soft);margin-bottom:6px;}
+  .metric-card strong{font-family:'Fraunces',serif;font-size:1.6rem;}
+  .notes-box{white-space:pre-wrap;min-height:150px;color:var(--ink-soft);}
+  .timeline{display:flex;flex-direction:column;gap:12px;}
+  .timeline-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;display:grid;grid-template-columns:110px 1fr auto;gap:14px;align-items:center;}
+  .timeline-item .date{font-size:.8rem;color:var(--ink-soft);}
+  .measure-table input,.diet-table input,.diet-table select,.field textarea{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;outline:none;}
+  .field textarea{min-height:110px;resize:vertical;}
+  .diet-meal{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;}
+  .diet-meal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;}
+  .diet-meal h4{margin:0;font-size:1rem;}
+  .small-muted{font-size:.8rem;color:var(--ink-soft);}
+  .danger-btn{border:1px solid rgba(210,73,44,.28);background:#fff;color:var(--paprika);border-radius:999px;padding:9px 14px;font-weight:700;cursor:pointer;}
+  .modal-card.wide{width:min(760px,100%);max-height:90vh;overflow:auto;}
+  .back-link{border:0;background:transparent;padding:0;color:var(--ink-soft);font-weight:700;cursor:pointer;margin-bottom:8px;}
+  .back-link:hover{color:var(--ink);}
+  @media (max-width:900px){.profile-grid,.profile-grid.three{grid-template-columns:1fr}.timeline-item{grid-template-columns:1fr}.profile-header{flex-direction:column}}
+
+
+  /* ---------- DIETAS ---------- */
+  .diet-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px;}
+  .diet-toolbar input{min-width:260px;flex:1;border:1px solid var(--line);border-radius:999px;padding:11px 15px;background:#fff;}
+  .diet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+  .diet-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 24px rgba(22,36,31,.05);}
+  .diet-card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px;}
+  .diet-card h3{margin:0;font-size:1.15rem;}
+  .diet-card-meta{font-size:.82rem;color:var(--ink-soft);margin-top:4px;}
+  .diet-card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0;}
+  .diet-card-stats div{background:var(--paper);border-radius:12px;padding:10px;}
+  .diet-card-stats small{display:block;color:var(--ink-soft);font-size:.7rem;}
+  .diet-card-stats strong{font-size:.92rem;}
+  .diet-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .template-badge{display:inline-block;background:#FFF2DC;color:var(--mango-deep);border-radius:999px;padding:5px 9px;font-size:.7rem;font-weight:800;}
+  .diet-builder-meal{border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;}
+  .diet-builder-meal-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px;}
+  .diet-builder-meal-head strong{font-size:.92rem;}
+  .diet-builder-items{display:flex;flex-direction:column;gap:8px;}
+  .diet-food-row{display:grid;grid-template-columns:1.4fr .7fr .6fr auto;gap:8px;align-items:center;}
+  .diet-food-row input{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;}
+  .diet-summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 18px;}
+  .diet-summary-strip div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px;}
+  .diet-summary-strip small{display:block;color:var(--ink-soft);font-size:.7rem;}
+  .diet-summary-strip strong{font-size:.9rem;}
+  @media(max-width:900px){.diet-grid{grid-template-columns:1fr}.diet-food-row{grid-template-columns:1fr}.diet-card-stats,.diet-summary-strip{grid-template-columns:repeat(2,1fr)}}
+
+  /* ---------- AGENDA ---------- */
+  .agenda-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px;}
+  .agenda-filters{display:flex;gap:8px;flex-wrap:wrap;}
+  .agenda-filters button{border:1px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:999px;padding:9px 14px;font-weight:700;cursor:pointer;}
+  .agenda-filters button.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .agenda-date{font-weight:700;color:var(--ink-soft);}
+  .agenda-list{display:flex;flex-direction:column;gap:12px;}
+  .appointment-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;grid-template-columns:92px 1fr auto;gap:16px;align-items:center;}
+  .appointment-time{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;}
+  .appointment-time small{display:block;font-family:'IBM Plex Sans',sans-serif;font-size:.72rem;font-weight:600;color:var(--ink-soft);}
+  .appointment-main strong{display:block;font-size:1rem;}
+  .appointment-main span{display:block;color:var(--ink-soft);font-size:.84rem;margin-top:2px;}
+  .appointment-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .mini-btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:7px 10px;font-size:.75rem;font-weight:700;cursor:pointer;}
+  .mini-btn:hover{background:var(--paper-dim);}
+  .status-pill.done{background:#E1EADF;color:#43613D;}
+  .status-pill.cancelled{background:#F7E1DC;color:#9B3A25;}
+  .status-pill.scheduled{background:#F6EBD6;color:#8C641E;}
+  .field select{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;outline:none;}
+  .dashboard-appointment-empty{padding:18px 0;color:var(--ink-soft);}
+  @media (max-width:900px){.appointment-card{grid-template-columns:1fr}.appointment-actions{justify-content:flex-start}.agenda-toolbar{align-items:flex-start}}
+
+</style>
+</head>
+<body>
+
+<nav class="labz-nav">
+  <div class="container-narrow">
+    <a href="#top" class="labz-wordmark">Lab<span>z</span></a>
+    <ul class="labz-links" id="navLinks">
+      <li><a href="#problema">O problema</a></li>
+      <li><a href="#recursos">Recursos</a></li>
+      <li><a href="#como-funciona">Como funciona</a></li>
+      <li><a href="#desafios">Desafios</a></li>
+      <li><a href="#equipe">Equipe</a></li>
+      <li><a href="#contato" class="btn-labz">Agendar demonstração</a></li>
+      <li><button id="navLoginBtn" class="btn-outline-labz" style="background:transparent;cursor:pointer;">Entrar</button></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">☰</button>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="container-narrow hero-grid">
+    <div>
+      <div class="hero-eyebrow">Software para consultórios de nutrição</div>
+      <h1>Pacientes, dietas e financeiro numa única tela.</h1>
+      <p class="lead-text">O Labz reúne o consultório inteiro — do primeiro atendimento ao repasse do mês — para que o nutricionista pare de alternar entre planilhas, papel e aplicativos separados.</p>
+      <div class="hero-actions">
+        <a href="#como-funciona" class="btn-labz">Ver como funciona</a>
+        <a href="#contato" class="btn-outline-labz">Falar com a equipe</a>
+      </div>
+    </div>
+    <div class="mock-card">
+      <div class="mock-card-head">
+        <div class="mock-title"><span class="dot"></span>Consultório — hoje</div>
+        <div class="mock-tabs" id="mockTabs">
+          <button class="mock-tab active" data-panel="pacientes">Pacientes</button>
+          <button class="mock-tab" data-panel="financeiro">Financeiro</button>
+        </div>
+      </div>
+
+      <div class="mock-panel" id="panel-pacientes">
+        <div class="mock-row">
+          <div class="mock-patient">
+            <div class="mock-avatar">AB</div>
+            <div><div class="mock-name">Ana Beatriz</div><div class="mock-sub">Emagrecimento · sem. 6</div></div>
+          </div>
+          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:78%"></div></div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-patient">
+            <div class="mock-avatar">CE</div>
+            <div><div class="mock-name">Carlos Eduardo</div><div class="mock-sub">Performance · sem. 3</div></div>
+          </div>
+          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:54%"></div></div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-patient">
+            <div class="mock-avatar">JP</div>
+            <div><div class="mock-name">Júlia Prado</div><div class="mock-sub">Reeducação · sem. 9</div></div>
+          </div>
+          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:91%"></div></div>
+        </div>
+        <div class="mock-stats-row">
+          <div class="mock-ring">
+            <div class="mock-ring-inner"><strong>82%</strong><small>meta hoje</small></div>
+          </div>
+          <div class="mock-fin">
+            <div class="mock-fin-label">Adesão média da semana</div>
+            <div class="mock-fin-value">74%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock-panel" id="panel-financeiro" style="display:none;">
+        <div class="mock-fin-label">Recebido no mês</div>
+        <div class="mock-fin-value">R$ 4.280</div>
+        <div class="mock-fin-bars">
+          <i style="height:40%"></i><i style="height:65%"></i><i style="height:50%"></i>
+          <i style="height:80%"></i><i style="height:60%"></i><i style="height:95%"></i><i style="height:70%"></i>
+        </div>
+        <div class="mock-row" style="margin-top:14px;">
+          <div class="mock-sub">Consultas confirmadas</div><div class="mock-name">18</div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-sub">Pagamentos pendentes</div><div class="mock-name">2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="problem-section" id="problema">
+  <div class="container-narrow">
+    <div class="section-tag">O problema</div>
+    <h2 class="section-title">O consultório carrega essa desorganização sozinho</h2>
+    <p class="section-desc">Sem um lugar único para consolidar as informações, o dia a dia da nutrição vira um quebra-cabeça de ferramentas soltas.</p>
+    <div class="problem-list">
+      <div class="problem-item">
+        <h3>Prontuário aqui, dieta ali</h3>
+        <p>Dados de pacientes espalhados entre WhatsApp, papel e aplicativos de dieta que não conversam entre si.</p>
+      </div>
+      <div class="problem-item">
+        <h3>Financeiro em planilha à parte</h3>
+        <p>Consultas e pagamentos anotados manualmente, sem uma visão real do fluxo de caixa do mês.</p>
+      </div>
+      <div class="problem-item">
+        <h3>Silêncio entre as consultas</h3>
+        <p>O paciente sai do consultório sem nenhum estímulo para manter o plano até o próximo retorno.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="recursos">
+  <div class="container-narrow">
+    <div class="section-tag">Recursos</div>
+    <h2 class="section-title">O essencial do consultório, dentro de um só aplicativo</h2>
+    <p class="section-desc">Cinco funcionalidades cobrem o que o nutricionista faz todos os dias — sem depender de nenhuma outra ferramenta.</p>
+
+    <div class="feature-row">
+      <div class="feature-text">
+        <div class="feature-badge">Pacientes</div>
+        <h3>Um perfil só para cada paciente</h3>
+        <p>Cadastro, histórico e evolução reunidos num único lugar, prontos para consulta antes de cada retorno.</p>
+      </div>
+      <div class="feature-visual fv-patient-card">
+        <div class="mock-ring" style="background:conic-gradient(var(--sage) 0% 91%, var(--paper-dim) 91% 100%);">
+          <div class="mock-ring-inner"><strong>91%</strong><small>adesão</small></div>
+        </div>
+        <div class="fv-list">
+          <div class="fv-row"><span>Júlia Prado</span><span>Reeducação alimentar</span></div>
+          <div class="fv-row"><span>Início</span><span>9 semanas atrás</span></div>
+          <div class="fv-row"><span>Próximo retorno</span><span>Quinta-feira</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-row reverse">
+      <div class="feature-text">
+        <div class="feature-badge">Dietas</div>
+        <h3>Planos alimentares vinculados ao acompanhamento</h3>
+        <p>Monte o cardápio, defina metas calóricas e veja a adesão do paciente sem precisar perguntar na próxima consulta.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="fv-tagbox" style="margin-bottom:16px;">
+          <span class="fv-tag">Café da manhã</span>
+          <span class="fv-tag">Almoço</span>
+          <span class="fv-tag">Lanche</span>
+          <span class="fv-tag">Jantar</span>
+        </div>
+        <div class="fv-list">
+          <div class="fv-row"><span>Meta calórica diária</span><span>1.850 kcal</span></div>
+          <div class="fv-row"><span>Refeições registradas hoje</span><span>3 de 4</span></div>
+          <div class="fv-row"><span>Água registrada</span><span>1,6 L</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-text">
+        <div class="feature-badge">Financeiro</div>
+        <h3>Consultas e repasses organizados sozinhos</h3>
+        <p>Cada consulta agendada já entra no controle financeiro do mês, sem lançamento manual em planilha.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="mock-fin-label">Fluxo de caixa da semana</div>
+        <div class="fv-chart">
+          <i style="height:40%"></i><i style="height:70%"></i><i style="height:55%"></i>
+          <i style="height:85%"></i><i style="height:60%"></i><i style="height:95%"></i><i style="height:75%"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-row reverse">
+      <div class="feature-text">
+        <div class="feature-badge">Desafios</div>
+        <h3>Engajamento entre uma consulta e outra</h3>
+        <p>Crie desafios entre grupos de pacientes com metas e ranking, para manter o plano vivo fora do consultório.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="fv-leader"><span><span class="lb-pos" style="background:var(--mango); color:var(--ink);">1</span>Carlos Eduardo</span><b>+320 pts</b></div>
+        <div class="fv-leader"><span><span class="lb-pos second">2</span>Ana Beatriz</span><b>+290 pts</b></div>
+        <div class="fv-leader"><span><span class="lb-pos third">3</span>Júlia Prado</span><b>+260 pts</b></div>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-text">
+        <div class="feature-badge">Painel do paciente</div>
+        <h3>O paciente acompanha o próprio progresso</h3>
+        <p>Cada paciente vê sua dieta, suas metas e sua posição nos desafios diretamente pelo aplicativo.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="fv-list">
+          <div class="fv-row"><span>Peso inicial</span><span>78,4 kg</span></div>
+          <div class="fv-row"><span>Peso atual</span><span>73,1 kg</span></div>
+          <div class="fv-row"><span>Meta</span><span>70,0 kg</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="steps-section" id="como-funciona">
+  <div class="container-narrow">
+    <div class="section-tag">Como funciona</div>
+    <h2 class="section-title">Do cadastro ao financeiro, em cinco passos</h2>
+    <p class="section-desc">O fluxo segue a rotina real do consultório — nada precisa ser feito fora do aplicativo.</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <span class="step-num">1</span>
+        <h4>Cadastra o paciente</h4>
+        <p>Dados, objetivo e histórico de saúde registrados em poucos minutos.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">2</span>
+        <h4>Monta a dieta</h4>
+        <p>Cardápio e metas calóricas vinculados diretamente ao perfil do paciente.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">3</span>
+        <h4>Acompanha a adesão</h4>
+        <p>O paciente registra as refeições e o nutricionista vê a evolução em tempo real.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">4</span>
+        <h4>Lança um desafio</h4>
+        <p>Um grupo de pacientes entra numa meta em comum, com ranking para motivar.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">5</span>
+        <h4>Fecha o financeiro</h4>
+        <p>Consultas e pagamentos do mês já aparecem consolidados, sem lançamento manual.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="challenge-section" id="desafios">
+  <div class="container-narrow challenge-grid">
+    <div>
+      <div class="section-tag">Desafios</div>
+      <h2>Motivação não termina quando a consulta acaba</h2>
+      <p>O nutricionista cria um desafio, define a meta e convida os pacientes. O ranking mantém o grupo engajado até o próximo retorno.</p>
+    </div>
+    <div class="leaderboard">
+      <div class="leaderboard-title">Desafio de setembro — hidratação diária</div>
+      <div class="lb-row"><span class="lb-name"><span class="lb-pos">1</span>Carlos Eduardo</span><span class="lb-score">320 pts</span></div>
+      <div class="lb-row"><span class="lb-name"><span class="lb-pos second">2</span>Ana Beatriz</span><span class="lb-score">290 pts</span></div>
+      <div class="lb-row"><span class="lb-name"><span class="lb-pos third">3</span>Júlia Prado</span><span class="lb-score">260 pts</span></div>
+      <div class="lb-row"><span class="lb-name"><span class="lb-pos" style="background:#4E5E54;color:#fff;">4</span>Marcos Lima</span><span class="lb-score">210 pts</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="equipe">
+  <div class="container-narrow">
+    <div class="section-tag">Equipe</div>
+    <h2 class="section-title">Feito com um nutricionista de verdade</h2>
+    <p class="section-desc">O Labz nasceu a partir da rotina de um consultório real, para resolver um problema real.</p>
+    <div class="team-grid">
+<div class="team-card">
+  <div class="team-role">Demandante</div>
+  <h3>Rafael Diaz</h3>
+  <p>Nutricionista em Campina Grande — trouxe o problema que deu origem ao projeto.</p>
+  <p style="margin-top:10px; font-size:0.85rem; color:var(--mango-deep); font-weight:600;">
+    Graduado em Nutrição pela [Unifacisa] · Pós-graduação em [nutrição esportiva]
+  </p>
+</div>
+      <div class="team-card">
+        <div class="team-role">Desenvolvimento</div>
+        <h3>Roberto Cauã</h3>
+        <p>Responsável pela concepção e construção do produto.</p>
+          <p style="margin-top:10px; font-size:0.85rem; color:var(--mango-deep); font-weight:600;">
+    Estudande de sistemas da informação pela [Unifacisa]
+  </p>
+      </div>
+      <div class="team-card">
+        <div class="team-role">Desenvolvimento</div>
+        <h3>Louhan Tinnis</h3>
+        <p>Responsável pela concepção e construção do produto.</p>
+          <p style="margin-top:10px; font-size:0.85rem; color:var(--mango-deep); font-weight:600;">
+    Estudande de sistemas da informação pela [Unifacisa]
+  </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="contato">
+  <div class="container-narrow cta-box">
+    <h2>Pronto para ver o Labz no seu consultório?</h2>
+    <button class="btn-cta-dark" id="openAppBtn" style="border:0;cursor:pointer;">Entrar no Labz</button>
+  </div>
+</section>
+
+<footer>
+  <div class="container-narrow">
+    <div class="footer-top">
+      <a href="#top" class="labz-wordmark">Lab<span>z</span></a>
+      <div>contato@labzapp.com.br</div>
+    </div>
+    <div>© 2026 Labz App. Projeto acadêmico desenvolvido por Roberto Cauã e Louhan Tinnis.</div>
+  </div>
+</footer>
+
+
+
+<div class="login-overlay" id="loginOverlay" aria-hidden="true">
+  <div class="login-card">
+    <div class="labz-wordmark" style="margin-bottom:18px;">Lab<span>z</span></div>
+    <h2>Bem-vindo de volta</h2>
+    <p>Entre na área do nutricionista. Seus dados são carregados com segurança pela API do Labz.</p>
+    <form id="loginForm">
+      <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" placeholder="voce@consultorio.com" required></div>
+      <div class="field"><label for="loginPassword">Senha</label><input id="loginPassword" type="password" placeholder="Sua senha" required></div>
+      <div class="login-actions"><button class="app-primary" type="submit">Entrar</button><button class="app-secondary" type="button" id="cancelLogin">Voltar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="app-shell" id="appShell">
+  <aside class="app-sidebar">
+    <div class="app-brand">Lab<span>z</span></div>
+    <nav class="app-nav">
+      <button class="active" data-view="dashboard">Dashboard</button>
+      <button data-view="patients">Pacientes</button>
+      <button data-view="diets">Dietas</button>
+      <button data-view="agenda">Agenda</button>
+      <button data-view="finance">Financeiro</button>
+    </nav>
+    <div class="app-sidebar-bottom"><div class="app-user">Rafael Diaz<br><small>Nutricionista</small></div><button id="logoutBtn" class="app-secondary" style="width:100%;margin-top:12px;">Sair</button></div>
+  </aside>
+  <main class="app-main">
+    <section class="app-view active" data-view-panel="dashboard">
+      <div class="app-topbar"><div><h1>Boa tarde, Rafael</h1><p>Visão geral do consultório hoje.</p></div><button class="app-primary" id="quickPatientBtn">+ Novo paciente</button></div>
+      <div class="stat-grid">
+        <div class="stat-card"><small>Pacientes ativos</small><strong id="statPatients">3</strong><em>+1 este mês</em></div>
+        <div class="stat-card"><small>Consultas hoje</small><strong id="statAppointmentsToday">0</strong><em id="statAppointmentsDone">0 concluídas</em></div>
+        <div class="stat-card"><small>Receita do mês</small><strong id="statRevenueMonth">R$ 0</strong><em>consultas concluídas</em></div>
+        <div class="stat-card"><small>Adesão média</small><strong>74%</strong><em>estável</em></div>
+      </div>
+      <div class="panel-grid">
+        <div class="panel-card"><h3>Próximas consultas</h3><table class="app-table"><thead><tr><th>Paciente</th><th>Horário</th><th>Tipo</th></tr></thead><tbody id="dashboardAppointmentBody"></tbody></table></div>
+        <div class="panel-card"><h3>Alertas</h3><div class="mock-row"><div><div class="mock-name">2 pagamentos</div><div class="mock-sub">pendentes neste mês</div></div></div><div class="mock-row"><div><div class="mock-name">Ana Beatriz</div><div class="mock-sub">3 dias sem registrar refeições</div></div></div><div class="mock-row"><div><div class="mock-name">Carlos Eduardo</div><div class="mock-sub">retorno agendado hoje</div></div></div></div>
+      </div>
+    </section>
+
+    <section class="app-view" data-view-panel="patients">
+      <div class="app-topbar"><div><h1>Pacientes</h1><p>Cadastre e acompanhe seus pacientes em um só lugar.</p></div><button class="app-primary" id="newPatientBtn">+ Novo paciente</button></div>
+      <div class="panel-card"><div class="patient-toolbar"><input id="patientSearch" placeholder="Buscar paciente por nome ou objetivo..."></div><table class="app-table"><thead><tr><th>Paciente</th><th>Objetivo</th><th>Início</th><th>Adesão</th></tr></thead><tbody id="patientTableBody"></tbody></table></div>
+    </section>
+
+
+    <section class="app-view" data-view-panel="patientProfile">
+      <button class="back-link" id="backToPatients">← Voltar para pacientes</button>
+      <div class="profile-header">
+        <div class="profile-heading"><div class="profile-avatar" id="profileAvatar">AB</div><div><h1 id="profileName" style="margin:0;">Paciente</h1><div class="profile-meta"><span id="profileGoal">Objetivo</span> · desde <span id="profileStart">—</span></div></div></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="app-secondary" id="editAnamnesisBtn">Editar anamnese</button><button class="app-primary" id="newEvolutionBtn">+ Registrar evolução</button></div>
+      </div>
+      <div class="profile-tabs" id="profileTabs">
+        <button class="active" data-profile-tab="overview">Resumo</button>
+        <button data-profile-tab="anamnesis">Anamnese</button>
+        <button data-profile-tab="evolution">Evolução</button>
+        <button data-profile-tab="measures">Medidas</button>
+        <button data-profile-tab="diet">Plano alimentar</button>
+      </div>
+      <div class="profile-panel active" data-profile-panel="overview">
+        <div class="profile-grid three" style="margin-bottom:18px;">
+          <div class="metric-card"><small>Peso atual</small><strong id="metricWeight">—</strong></div>
+          <div class="metric-card"><small>Variação desde o início</small><strong id="metricChange">—</strong></div>
+          <div class="metric-card"><small>Adesão</small><strong id="metricAdherence">—</strong></div>
+        </div>
+        <div class="profile-grid">
+          <div class="panel-card"><h3>Última evolução</h3><div id="lastEvolution" class="notes-box">Nenhuma evolução registrada.</div></div>
+          <div class="panel-card"><h3>Resumo da anamnese</h3><div id="anamnesisSummary" class="notes-box">Nenhuma anamnese registrada.</div></div>
+        </div>
+      </div>
+      <div class="profile-panel" data-profile-panel="anamnesis"><div class="panel-card"><h3>Anamnese e histórico</h3><div id="anamnesisFull" class="notes-box"></div></div></div>
+      <div class="profile-panel" data-profile-panel="evolution"><div class="panel-card"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;"><h3 style="margin:0;">Histórico de evolução</h3><button class="app-primary" id="newEvolutionBtn2">+ Registrar evolução</button></div><div id="evolutionTimeline" class="timeline"></div></div></div>
+      <div class="profile-panel" data-profile-panel="measures"><div class="panel-card"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;"><h3 style="margin:0;">Medidas corporais</h3><button class="app-primary" id="newMeasureBtn">+ Nova medição</button></div><div style="overflow:auto;"><table class="app-table"><thead><tr><th>Data</th><th>Peso</th><th>Cintura</th><th>Quadril</th><th>% Gordura</th></tr></thead><tbody id="measureTableBody"></tbody></table></div></div></div>
+      <div class="profile-panel" data-profile-panel="diet"><div class="panel-card"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;"><div><h3 style="margin:0;">Plano alimentar</h3><div class="small-muted">Plano atual do paciente</div></div><button class="app-primary" id="editDietBtn">Editar plano</button></div><div id="dietPreview"></div></div></div>
+    </section>
+
+    <section class="app-view" data-view-panel="diets">
+      <div class="app-topbar"><div><h1>Dietas</h1><p>Crie, reutilize e acompanhe planos alimentares dos pacientes.</p></div><button class="app-primary" id="newDietBtn">+ Nova dieta</button></div>
+      <div class="stat-grid">
+        <div class="stat-card"><small>Planos ativos</small><strong id="dietStatActive">0</strong></div>
+        <div class="stat-card"><small>Templates</small><strong id="dietStatTemplates">0</strong></div>
+        <div class="stat-card"><small>Média calórica</small><strong id="dietStatCalories">0 kcal</strong></div>
+        <div class="stat-card"><small>Pacientes com plano</small><strong id="dietStatPatients">0</strong></div>
+      </div>
+      <div class="panel-card">
+        <div class="diet-toolbar"><input id="dietSearch" placeholder="Buscar por paciente, objetivo ou nome do plano..."><button class="app-secondary" id="newTemplateBtn">+ Criar template</button></div>
+        <div class="diet-grid" id="dietGrid"></div>
+      </div>
+    </section>
+    <section class="app-view" data-view-panel="agenda">
+      <div class="app-topbar"><div><h1>Agenda</h1><p>Consultas e retornos do consultório.</p></div><button class="app-primary" id="newAppointmentBtn">+ Agendar consulta</button></div>
+      <div class="panel-card">
+        <div class="agenda-toolbar">
+          <div class="agenda-filters" id="agendaFilters"><button class="active" data-agenda-filter="today">Hoje</button><button data-agenda-filter="upcoming">Próximas</button><button data-agenda-filter="all">Todas</button></div>
+          <div class="agenda-date" id="agendaDateLabel"></div>
+        </div>
+        <div class="agenda-list" id="agendaList"></div>
+      </div>
+    </section>
+    <section class="app-view" data-view-panel="finance"><div class="app-topbar"><div><h1>Financeiro</h1><p>Receitas, consultas e pagamentos pendentes.</p></div></div><div class="stat-grid"><div class="stat-card"><small>Recebido no mês</small><strong id="financeReceived">R$ 0</strong></div><div class="stat-card"><small>Previsto</small><strong id="financePending">R$ 0</strong></div><div class="stat-card"><small>Consultas concluídas</small><strong id="financePaidCount">0</strong></div><div class="stat-card"><small>Ticket médio</small><strong id="financeTicket">R$ 0</strong></div></div><div class="panel-card"><h3>Movimentações por consulta</h3><table class="app-table"><thead><tr><th>Data</th><th>Paciente</th><th>Consulta</th><th>Status</th><th>Valor</th></tr></thead><tbody id="financeTableBody"></tbody></table></div></section>
+  </main>
+</div>
+
+<div class="modal-labz" id="patientModal">
+  <div class="modal-card"><h3>Novo paciente</h3><form id="patientForm"><div class="field"><label>Nome completo</label><input id="patientName" required></div><div class="two-fields"><div class="field"><label>Objetivo</label><input id="patientGoal" placeholder="Ex.: Emagrecimento" required></div><div class="field"><label>Adesão inicial (%)</label><input id="patientAdherence" type="number" min="0" max="100" value="0"></div></div><div class="login-actions"><button class="app-primary" type="submit">Salvar paciente</button><button class="app-secondary" type="button" id="cancelPatient">Cancelar</button></div></form></div>
+</div>
+
+
+<div class="modal-labz" id="anamnesisModal"><div class="modal-card wide"><h3>Anamnese</h3><form id="anamnesisForm"><div class="two-fields"><div class="field"><label>Queixa principal / objetivo</label><textarea id="anamnesisComplaint"></textarea></div><div class="field"><label>Histórico clínico</label><textarea id="anamnesisHistory"></textarea></div></div><div class="two-fields"><div class="field"><label>Alergias / intolerâncias</label><textarea id="anamnesisAllergies"></textarea></div><div class="field"><label>Medicamentos / suplementos</label><textarea id="anamnesisMeds"></textarea></div></div><div class="field"><label>Rotina, preferências e observações</label><textarea id="anamnesisRoutine"></textarea></div><div class="login-actions"><button class="app-primary" type="submit">Salvar anamnese</button><button class="app-secondary" type="button" data-close-modal="anamnesisModal">Cancelar</button></div></form></div></div>
+
+<div class="modal-labz" id="evolutionModal"><div class="modal-card"><h3>Registrar evolução</h3><form id="evolutionForm"><div class="two-fields"><div class="field"><label>Peso (kg)</label><input id="evolutionWeight" type="number" step="0.1" min="0" required></div><div class="field"><label>Adesão (%)</label><input id="evolutionAdherence" type="number" min="0" max="100" required></div></div><div class="field"><label>Observações da consulta</label><textarea id="evolutionNotes" placeholder="Ex.: boa adaptação ao plano, fome reduzida, ajustar lanche..."></textarea></div><div class="login-actions"><button class="app-primary" type="submit">Salvar evolução</button><button class="app-secondary" type="button" data-close-modal="evolutionModal">Cancelar</button></div></form></div></div>
+
+<div class="modal-labz" id="measureModal"><div class="modal-card"><h3>Nova medição</h3><form id="measureForm"><div class="two-fields"><div class="field"><label>Peso (kg)</label><input id="measureWeight" type="number" step="0.1" required></div><div class="field"><label>Cintura (cm)</label><input id="measureWaist" type="number" step="0.1"></div></div><div class="two-fields"><div class="field"><label>Quadril (cm)</label><input id="measureHip" type="number" step="0.1"></div><div class="field"><label>Gordura corporal (%)</label><input id="measureFat" type="number" step="0.1"></div></div><div class="login-actions"><button class="app-primary" type="submit">Salvar medição</button><button class="app-secondary" type="button" data-close-modal="measureModal">Cancelar</button></div></form></div></div>
+
+<div class="modal-labz" id="dietModal"><div class="modal-card wide"><h3>Plano alimentar</h3><form id="dietForm"><div class="two-fields"><div class="field"><label>Meta calórica (kcal)</label><input id="dietCalories" type="number" min="0"></div><div class="field"><label>Meta de água (L)</label><input id="dietWater" type="number" step="0.1" min="0"></div></div><div id="dietEditor"></div><button class="app-secondary" type="button" id="addMealBtn">+ Adicionar refeição</button><div class="login-actions"><button class="app-primary" type="submit">Salvar plano</button><button class="app-secondary" type="button" data-close-modal="dietModal">Cancelar</button></div></form></div></div>
+
+
+<div class="modal-labz" id="dietBuilderModal"><div class="modal-card wide"><h3 id="dietBuilderTitle">Nova dieta</h3><form id="dietBuilderForm"><input type="hidden" id="dietBuilderId"><div class="two-fields"><div class="field"><label>Nome do plano</label><input id="dietBuilderName" placeholder="Ex.: Emagrecimento 1800 kcal" required></div><div class="field"><label>Paciente</label><select id="dietBuilderPatient"></select></div></div><div class="two-fields"><div class="field"><label>Meta calórica (kcal)</label><input id="dietBuilderCalories" type="number" min="0" required></div><div class="field"><label>Meta de água (L)</label><input id="dietBuilderWater" type="number" step="0.1" min="0"></div></div><div class="field"><label>Objetivo / observações</label><textarea id="dietBuilderNotes" placeholder="Ex.: déficit moderado, priorizar saciedade e praticidade..."></textarea></div><div class="diet-summary-strip"><div><small>Refeições</small><strong id="dietBuilderMealCount">0</strong></div><div><small>Alimentos</small><strong id="dietBuilderFoodCount">0</strong></div><div><small>Proteína</small><strong id="dietBuilderProtein">—</strong></div><div><small>Status</small><strong id="dietBuilderStatus">Rascunho</strong></div></div><div id="dietBuilderMeals"></div><button class="app-secondary" type="button" id="dietBuilderAddMeal">+ Adicionar refeição</button><div class="login-actions"><button class="app-primary" type="submit">Salvar plano</button><button class="app-secondary" type="button" data-close-modal="dietBuilderModal">Cancelar</button></div></form></div></div>
+
+<div class="modal-labz" id="appointmentModal"><div class="modal-card"><h3 id="appointmentModalTitle">Agendar consulta</h3><form id="appointmentForm"><input type="hidden" id="appointmentId"><div class="field"><label>Paciente</label><select id="appointmentPatient" required></select></div><div class="two-fields"><div class="field"><label>Data</label><input id="appointmentDate" type="date" required></div><div class="field"><label>Horário</label><input id="appointmentTime" type="time" required></div></div><div class="two-fields"><div class="field"><label>Tipo</label><select id="appointmentType"><option>Primeira consulta</option><option>Retorno</option><option>Avaliação</option><option>Online</option></select></div><div class="field"><label>Valor (R$)</label><input id="appointmentValue" type="number" min="0" step="0.01" value="200"></div></div><div class="field"><label>Observações</label><textarea id="appointmentNotes" placeholder="Ex.: retorno de 30 dias, revisar adesão e medidas..."></textarea></div><div class="login-actions"><button class="app-primary" type="submit">Salvar consulta</button><button class="app-secondary" type="button" data-close-modal="appointmentModal">Cancelar</button></div></form></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => navLinks.classList.remove('show'));
+  });
+
+  // Active link on scroll
+  const sections = document.querySelectorAll('section[id], header[id]');
+  const links = document.querySelectorAll('.labz-links a[href^="#"]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      const top = sec.offsetTop - 90;
+      if (window.scrollY >= top) current = sec.getAttribute('id');
+    });
+    links.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  });
+
+  // Hero mock tabs
+  const mockTabs = document.querySelectorAll('#mockTabs .mock-tab');
+  mockTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      mockTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.mock-panel').forEach(p => p.style.display = 'none');
+      document.getElementById('panel-' + tab.dataset.panel).style.display = 'block';
+    });
+  });
+
+
+  // ---------- LABZ FULLSTACK APP ----------
+  const $ = id => document.getElementById(id);
+  const state = { user:null, patients:[], appointments:[], diets:[], currentPatientId:null, agendaFilter:'today', dietDraftMeals:[] };
+  const api = async (path, options={}) => {
+    const res = await fetch('/api'+path,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(options.headers||{})},...options});
+    if(res.status===204) return null;
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data.error||'Erro na API');
+    return data;
+  };
+  const LabzAPI={
+    me:()=>api('/auth/me'), login:(email,password)=>api('/auth/login',{method:'POST',body:JSON.stringify({email,password})}), logout:()=>api('/auth/logout',{method:'POST'}),
+    patients:()=>api('/patients'), createPatient:d=>api('/patients',{method:'POST',body:JSON.stringify(d)}), updatePatient:(id,d)=>api('/patients/'+id,{method:'PUT',body:JSON.stringify(d)}),
+    appointments:()=>api('/appointments'), createAppointment:d=>api('/appointments',{method:'POST',body:JSON.stringify(d)}), updateAppointment:(id,d)=>api('/appointments/'+id,{method:'PUT',body:JSON.stringify(d)}),
+    diets:()=>api('/diets'), createDiet:d=>api('/diets',{method:'POST',body:JSON.stringify(d)}), updateDiet:(id,d)=>api('/diets/'+id,{method:'PUT',body:JSON.stringify(d)})
+  };
+  const loginOverlay=$('loginOverlay'), appShell=$('appShell');
+  const landingNodes=[...document.body.children].filter(el=>el.id!=='loginOverlay'&&el.id!=='appShell'&&!el.classList.contains('modal-labz')&&el.tagName!=='SCRIPT');
+  const showLogin=()=>loginOverlay.classList.add('active');
+  const openModal=id=>$(id)?.classList.add('active');
+  const closeModal=id=>$(id)?.classList.remove('active');
+  const escapeHtml=(v='')=>String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const initials=(name='')=>name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+  const fmt=(v,s='')=>v===undefined||v===null||v===''?'—':`${v}${s}`;
+  const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const isoDate=d=>{const x=new Date(d);const off=x.getTimezoneOffset();return new Date(x.getTime()-off*60000).toISOString().slice(0,10)};
+  const todayISO=()=>isoDate(new Date());
+  const formatDateBR=iso=>{if(!iso)return'—';const[y,m,d]=iso.split('-');return`${d}/${m}/${y}`};
+  const statusLabel=s=>s==='done'?'Concluída':s==='cancelled'?'Cancelada':'Agendada';
+  const statusClass=s=>s==='done'?'done':s==='cancelled'?'cancelled':'scheduled';
+  const getCurrentPatient=()=>state.patients.find(p=>p.id===state.currentPatientId);
+  const patientById=id=>state.patients.find(p=>p.id===id);
+
+  function switchView(view){document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));document.querySelector(`[data-view-panel="${view}"]`)?.classList.add('active');document.querySelectorAll('.app-nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));}
+  function openApp(){landingNodes.forEach(el=>el.style.display='none');loginOverlay.classList.remove('active');appShell.classList.add('active');const u=document.querySelector('.app-user');if(u&&state.user)u.innerHTML=`${escapeHtml(state.user.name)}<br><small>Nutricionista</small>`;const h=document.querySelector('[data-view-panel=\"dashboard\"] .app-topbar h1');if(h&&state.user)h.textContent=`Olá, ${state.user.name.split(' ')[0]}`;}
+  function closeApp(){appShell.classList.remove('active');landingNodes.forEach(el=>el.style.display='');window.scrollTo({top:0,behavior:'smooth'});}
+  function showError(err){console.error(err);alert(err?.message||'Algo deu errado.');}
+  async function refreshAll(){
+    [state.patients,state.appointments,state.diets]=await Promise.all([LabzAPI.patients(),LabzAPI.appointments(),LabzAPI.diets()]);
+    renderPatients($('patientSearch')?.value||'');renderDiets($('dietSearch')?.value||'');renderAgenda();renderDashboard();renderFinance();
+    if(state.currentPatientId) renderPatientProfile();
+  }
+
+  // Auth
+  $('openAppBtn')?.addEventListener('click',showLogin); $('navLoginBtn')?.addEventListener('click',showLogin); $('cancelLogin')?.addEventListener('click',()=>closeModal('loginOverlay'));
+  $('loginForm')?.addEventListener('submit',async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Entrando...';try{const r=await LabzAPI.login($('loginEmail').value,$('loginPassword').value);state.user=r.user;openApp();await refreshAll();}catch(err){showError(err)}finally{btn.disabled=false;btn.textContent='Entrar'}});
+  $('logoutBtn')?.addEventListener('click',async()=>{try{await LabzAPI.logout()}finally{state.user=null;closeApp()}});
+  (async()=>{try{state.user=await LabzAPI.me();openApp();await refreshAll()}catch{}})();
+
+  // Navigation & generic modal close
+  document.querySelectorAll('.app-nav button').forEach(btn=>btn.addEventListener('click',()=>{switchView(btn.dataset.view);if(btn.dataset.view==='diets')renderDiets();if(btn.dataset.view==='agenda')renderAgenda();if(btn.dataset.view==='dashboard')renderDashboard();if(btn.dataset.view==='finance')renderFinance();}));
+  document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.closeModal)));
+
+  // Patients
+  function renderPatients(filter=''){
+    const tbody=$('patientTableBody');if(!tbody)return;const q=filter.toLowerCase();const items=state.patients.filter(p=>(`${p.name} ${p.goal||''}`).toLowerCase().includes(q));
+    tbody.innerHTML=items.length?items.map(p=>`<tr><td><button class="patient-name-btn" data-patient-id="${p.id}">${escapeHtml(p.name)}</button></td><td>${escapeHtml(p.goal||'—')}</td><td>${escapeHtml(p.start||'—')}</td><td><span class="status-pill ${p.adherence>=70?'ok':''}">${p.adherence||0}%</span></td></tr>`).join(''):'<tr><td colspan="4" class="empty-state">Nenhum paciente encontrado.</td></tr>';
+    $('statPatients').textContent=state.patients.length;tbody.querySelectorAll('[data-patient-id]').forEach(b=>b.addEventListener('click',()=>openPatientProfile(b.dataset.patientId)));
+  }
+  $('patientSearch')?.addEventListener('input',e=>renderPatients(e.target.value));
+  const newPatient=()=>{ $('patientForm').reset();$('patientAdherence').value=0;openModal('patientModal') };
+  $('newPatientBtn')?.addEventListener('click',newPatient);$('quickPatientBtn')?.addEventListener('click',newPatient);$('cancelPatient')?.addEventListener('click',()=>closeModal('patientModal'));
+  $('patientForm')?.addEventListener('submit',async e=>{e.preventDefault();try{await LabzAPI.createPatient({name:$('patientName').value.trim(),goal:$('patientGoal').value.trim(),adherence:Number($('patientAdherence').value||0)});closeModal('patientModal');await refreshAll()}catch(err){showError(err)}});
+  $('backToPatients')?.addEventListener('click',()=>switchView('patients'));
+  function openPatientProfile(id){state.currentPatientId=id;switchView('patientProfile');renderPatientProfile();window.scrollTo({top:0,behavior:'smooth'});}
+  function renderPatientProfile(){
+    const p=getCurrentPatient();if(!p)return;$('profileAvatar').textContent=initials(p.name);$('profileName').textContent=p.name;$('profileGoal').textContent=p.goal||'—';$('profileStart').textContent=p.start||'—';
+    const measures=Array.isArray(p.measures)?p.measures:[];const latest=measures.at(-1),first=measures[0];$('metricWeight').textContent=latest?fmt(latest.weight,' kg'):fmt(p.currentWeight,' kg');
+    const diff=latest&&first?Number(latest.weight)-Number(first.weight):null;$('metricChange').textContent=diff===null?'—':`${diff>0?'+':''}${diff.toFixed(1)} kg`;$('metricAdherence').textContent=fmt(p.adherence,'%');
+    const evs=Array.isArray(p.evolutions)?p.evolutions:[],ev=evs.at(-1);$('lastEvolution').textContent=ev?`${ev.date} — ${ev.notes||'Sem observações.'}`:'Nenhuma evolução registrada.';
+    const a=p.anamnesis||{};$('anamnesisSummary').textContent=[a.complaint,a.allergies&&`Alergias/intolerâncias: ${a.allergies}`].filter(Boolean).join('\n\n')||'Nenhuma anamnese registrada.';
+    $('anamnesisFull').textContent=[['Queixa principal / objetivo',a.complaint],['Histórico clínico',a.history],['Alergias / intolerâncias',a.allergies],['Medicamentos / suplementos',a.meds],['Rotina e observações',a.routine]].filter(x=>x[1]).map(x=>`${x[0]}\n${x[1]}`).join('\n\n')||'Nenhuma anamnese registrada.';
+    $('evolutionTimeline').innerHTML=evs.length?[...evs].reverse().map(e=>`<div class="timeline-item"><div class="date">${escapeHtml(e.date)}</div><div><strong>${escapeHtml(e.notes||'Sem observações')}</strong><div class="small-muted">Peso: ${fmt(e.weight,' kg')}</div></div><span class="status-pill ${Number(e.adherence)>=70?'ok':''}">${fmt(e.adherence,'%')}</span></div>`).join(''):'<div class="empty-state">Nenhuma evolução registrada.</div>';
+    $('measureTableBody').innerHTML=measures.length?[...measures].reverse().map(m=>`<tr><td>${escapeHtml(m.date)}</td><td>${fmt(m.weight,' kg')}</td><td>${fmt(m.waist,' cm')}</td><td>${fmt(m.hip,' cm')}</td><td>${fmt(m.fat,'%')}</td></tr>`).join(''):'<tr><td colspan="5" class="empty-state">Nenhuma medição registrada.</td></tr>';
+    const d=state.diets.find(d=>d.patientId===p.id&&!d.isTemplate);$('dietPreview').innerHTML=d?`<div class="profile-grid" style="margin-bottom:16px;"><div class="metric-card"><small>Meta calórica</small><strong>${fmt(d.calories,' kcal')}</strong></div><div class="metric-card"><small>Água</small><strong>${fmt(d.water,' L')}</strong></div></div>${(d.meals||[]).map(m=>`<div class="diet-meal"><div class="diet-meal-head"><h4>${escapeHtml(m.name)}</h4></div><div class="small-muted">${escapeHtml((m.foods||[]).map(f=>`${f.name}${f.qty?' — '+f.qty:''}`).join(', ')||m.items||'')}</div></div>`).join('')}`:'<div class="empty-state">Nenhum plano alimentar cadastrado.</div>';
+  }
+  document.querySelectorAll('#profileTabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#profileTabs button').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.profile-panel').forEach(p=>p.classList.toggle('active',p.dataset.profilePanel===btn.dataset.profileTab));}));
+  $('editAnamnesisBtn')?.addEventListener('click',()=>{const a=getCurrentPatient()?.anamnesis||{};$('anamnesisComplaint').value=a.complaint||'';$('anamnesisHistory').value=a.history||'';$('anamnesisAllergies').value=a.allergies||'';$('anamnesisMeds').value=a.meds||'';$('anamnesisRoutine').value=a.routine||'';openModal('anamnesisModal')});
+  $('anamnesisForm')?.addEventListener('submit',async e=>{e.preventDefault();const p=getCurrentPatient();try{await LabzAPI.updatePatient(p.id,{anamnesis:{complaint:$('anamnesisComplaint').value.trim(),history:$('anamnesisHistory').value.trim(),allergies:$('anamnesisAllergies').value.trim(),meds:$('anamnesisMeds').value.trim(),routine:$('anamnesisRoutine').value.trim()}});closeModal('anamnesisModal');await refreshAll()}catch(err){showError(err)}});
+  const openEvolution=()=>{const p=getCurrentPatient();$('evolutionForm').reset();$('evolutionAdherence').value=p?.adherence||0;openModal('evolutionModal')};$('newEvolutionBtn')?.addEventListener('click',openEvolution);$('newEvolutionBtn2')?.addEventListener('click',openEvolution);
+  $('evolutionForm')?.addEventListener('submit',async e=>{e.preventDefault();const p=getCurrentPatient(),items=[...(p.evolutions||[])];const weight=Number($('evolutionWeight').value),adherence=Number($('evolutionAdherence').value);items.push({date:new Date().toLocaleDateString('pt-BR'),weight,adherence,notes:$('evolutionNotes').value.trim()});try{await LabzAPI.updatePatient(p.id,{evolutions:items,currentWeight:weight,adherence});closeModal('evolutionModal');await refreshAll()}catch(err){showError(err)}});
+  $('newMeasureBtn')?.addEventListener('click',()=>{$('measureForm').reset();openModal('measureModal')});
+  $('measureForm')?.addEventListener('submit',async e=>{e.preventDefault();const p=getCurrentPatient(),items=[...(p.measures||[])];const weight=Number($('measureWeight').value);items.push({date:new Date().toLocaleDateString('pt-BR'),weight,waist:$('measureWaist').value?Number($('measureWaist').value):'',hip:$('measureHip').value?Number($('measureHip').value):'',fat:$('measureFat').value?Number($('measureFat').value):''});try{await LabzAPI.updatePatient(p.id,{measures:items,currentWeight:weight});closeModal('measureModal');await refreshAll()}catch(err){showError(err)}});
+
+  // Diets
+  function renderDiets(filter=''){
+    const q=filter.toLowerCase();const items=state.diets.filter(d=>{const p=patientById(d.patientId);return(`${d.name} ${d.notes||''} ${p?.name||''} ${p?.goal||''}`).toLowerCase().includes(q)});const active=state.diets.filter(d=>!d.isTemplate),templates=state.diets.filter(d=>d.isTemplate);$('dietStatActive').textContent=active.length;$('dietStatTemplates').textContent=templates.length;$('dietStatCalories').textContent=`${Math.round(active.reduce((s,d)=>s+Number(d.calories||0),0)/(active.length||1))} kcal`;$('dietStatPatients').textContent=new Set(active.map(d=>d.patientId).filter(Boolean)).size;
+    $('dietGrid').innerHTML=items.length?items.map(d=>{const p=patientById(d.patientId);return`<div class="diet-card"><div class="diet-card-top"><div><div class="diet-card-badge">${d.isTemplate?'Template':'Plano ativo'}</div><h3>${escapeHtml(d.name)}</h3><div class="small-muted">${d.isTemplate?'Reutilizável':escapeHtml(p?.name||'Sem paciente')}</div></div><strong>${fmt(d.calories,' kcal')}</strong></div><div class="small-muted" style="margin:12px 0;">${escapeHtml(d.notes||'Sem observações')}</div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="mini-btn" data-diet-edit="${d.id}">Editar</button>${d.isTemplate?`<button class="mini-btn" data-diet-use="${d.id}">Usar template</button>`:''}</div></div>`}).join(''):'<div class="empty-state">Nenhuma dieta encontrada.</div>';
+    $('dietGrid').querySelectorAll('[data-diet-edit]').forEach(b=>b.addEventListener('click',()=>openDietBuilder(b.dataset.dietEdit)));$('dietGrid').querySelectorAll('[data-diet-use]').forEach(b=>b.addEventListener('click',()=>openDietBuilder('',b.dataset.dietUse)));
+  }
+  $('dietSearch')?.addEventListener('input',e=>renderDiets(e.target.value));
+  function fillDietPatients(selected=''){const s=$('dietBuilderPatient');s.innerHTML='<option value="">Sem paciente / template</option>'+state.patients.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+  function addDietMeal(meal={name:'',foods:[]}){state.dietDraftMeals.push({name:meal.name||'',foods:Array.isArray(meal.foods)?meal.foods.map(f=>({...f})):(meal.items?[{name:meal.items,qty:'',kcal:''}]:[])});renderDietDraft()}
+  function renderDietDraft(){const box=$('dietBuilderMeals');box.innerHTML=state.dietDraftMeals.map((m,mi)=>`<div class="diet-meal" data-meal="${mi}"><div class="diet-meal-head"><input class="meal-name-input" value="${escapeHtml(m.name)}" placeholder="Nome da refeição"><button type="button" class="mini-btn" data-remove-meal="${mi}">Remover</button></div><div>${m.foods.map((f,fi)=>`<div class="food-row"><input value="${escapeHtml(f.name||'')}" placeholder="Alimento" data-food-name="${mi}:${fi}"><input value="${escapeHtml(f.qty||'')}" placeholder="Quantidade" data-food-qty="${mi}:${fi}"><input value="${escapeHtml(f.kcal||'')}" type="number" placeholder="kcal" data-food-kcal="${mi}:${fi}"><button type="button" class="mini-btn" data-remove-food="${mi}:${fi}">×</button></div>`).join('')}</div><button type="button" class="mini-btn" data-add-food="${mi}">+ alimento</button></div>`).join('');$('dietBuilderMealCount').textContent=state.dietDraftMeals.length;$('dietBuilderFoodCount').textContent=state.dietDraftMeals.reduce((s,m)=>s+m.foods.length,0);$('dietBuilderStatus').textContent=$('dietBuilderPatient').value?'Ativo':'Template';
+    box.querySelectorAll('.meal-name-input').forEach((el,i)=>el.addEventListener('input',()=>state.dietDraftMeals[i].name=el.value));box.querySelectorAll('[data-add-food]').forEach(b=>b.addEventListener('click',()=>{state.dietDraftMeals[+b.dataset.addFood].foods.push({name:'',qty:'',kcal:''});renderDietDraft()}));box.querySelectorAll('[data-remove-meal]').forEach(b=>b.addEventListener('click',()=>{state.dietDraftMeals.splice(+b.dataset.removeMeal,1);renderDietDraft()}));box.querySelectorAll('[data-remove-food]').forEach(b=>b.addEventListener('click',()=>{const[m,f]=b.dataset.removeFood.split(':').map(Number);state.dietDraftMeals[m].foods.splice(f,1);renderDietDraft()}));['name','qty','kcal'].forEach(k=>box.querySelectorAll(`[data-food-${k}]`).forEach(el=>el.addEventListener('input',()=>{const[m,f]=el.dataset['food'+k[0].toUpperCase()+k.slice(1)].split(':').map(Number);state.dietDraftMeals[m].foods[f][k]=el.value})));}
+  function openDietBuilder(id='',templateId=''){const src=id?state.diets.find(d=>d.id===id):templateId?state.diets.find(d=>d.id===templateId):null;$('dietBuilderId').value=id||'';$('dietBuilderTitle').textContent=id?'Editar dieta':templateId?'Novo plano a partir do template':'Nova dieta';$('dietBuilderName').value=src?.name||'';$('dietBuilderCalories').value=src?.calories||'';$('dietBuilderWater').value=src?.water||'';$('dietBuilderNotes').value=src?.notes||'';fillDietPatients(id?src?.patientId||'':state.currentPatientId||'');state.dietDraftMeals=(src?.meals||[]).map(m=>({name:m.name||'',foods:(m.foods||[]).map(f=>({...f}))}));if(!state.dietDraftMeals.length)addDietMeal();else renderDietDraft();openModal('dietBuilderModal')}
+  $('newDietBtn')?.addEventListener('click',()=>openDietBuilder());$('newTemplateBtn')?.addEventListener('click',()=>{state.currentPatientId=null;openDietBuilder()});$('dietBuilderAddMeal')?.addEventListener('click',()=>addDietMeal());$('dietBuilderPatient')?.addEventListener('change',renderDietDraft);
+  $('dietBuilderForm')?.addEventListener('submit',async e=>{e.preventDefault();const id=$('dietBuilderId').value;const data={name:$('dietBuilderName').value.trim(),patientId:$('dietBuilderPatient').value||null,calories:Number($('dietBuilderCalories').value||0),water:$('dietBuilderWater').value?Number($('dietBuilderWater').value):null,notes:$('dietBuilderNotes').value.trim(),isTemplate:!$('dietBuilderPatient').value,meals:state.dietDraftMeals};try{id?await LabzAPI.updateDiet(id,data):await LabzAPI.createDiet(data);closeModal('dietBuilderModal');await refreshAll()}catch(err){showError(err)}});
+  $('editDietBtn')?.addEventListener('click',()=>{const d=state.diets.find(d=>d.patientId===state.currentPatientId&&!d.isTemplate);openDietBuilder(d?.id||'')});
+
+  // Agenda & finance
+  function renderAgenda(){let items=[...state.appointments].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)),today=todayISO();if(state.agendaFilter==='today')items=items.filter(a=>a.date===today);if(state.agendaFilter==='upcoming')items=items.filter(a=>a.date>=today&&a.status!=='cancelled');$('agendaDateLabel').textContent=state.agendaFilter==='today'?new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'}):`${items.length} consultas`;$('agendaList').innerHTML=items.length?items.map(a=>`<div class="appointment-card"><div class="appointment-time">${escapeHtml(a.time)}<small>${formatDateBR(a.date)}</small></div><div class="appointment-main"><strong>${escapeHtml(patientById(a.patientId)?.name||a.patientName||'Paciente')}</strong><span>${escapeHtml(a.type)} · ${money(a.value)}${a.notes?` · ${escapeHtml(a.notes)}`:''}</span></div><div class="appointment-actions"><span class="status-pill ${statusClass(a.status)}">${statusLabel(a.status)}</span>${a.status==='scheduled'?`<button class="mini-btn" data-done="${a.id}">Concluir</button>`:''}<button class="mini-btn" data-edit="${a.id}">Editar</button>${a.status!=='cancelled'?`<button class="mini-btn" data-cancel="${a.id}">Cancelar</button>`:''}</div></div>`).join(''):'<div class="empty-state">Nenhuma consulta neste período.</div>';$('agendaList').querySelectorAll('[data-done]').forEach(b=>b.addEventListener('click',()=>updateAppointmentStatus(b.dataset.done,'done')));$('agendaList').querySelectorAll('[data-cancel]').forEach(b=>b.addEventListener('click',()=>updateAppointmentStatus(b.dataset.cancel,'cancelled')));$('agendaList').querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openAppointmentModal(b.dataset.edit)))}
+  function renderDashboard(){const today=todayISO(),todayItems=state.appointments.filter(a=>a.date===today&&a.status!=='cancelled');$('statAppointmentsToday').textContent=todayItems.length;$('statAppointmentsDone').textContent=`${todayItems.filter(a=>a.status==='done').length} concluídas`;const now=new Date(),ym=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,revenue=state.appointments.filter(a=>a.date.startsWith(ym)&&a.status==='done').reduce((s,a)=>s+Number(a.value||0),0);$('statRevenueMonth').textContent=money(revenue);const upcoming=state.appointments.filter(a=>a.date>=today&&a.status==='scheduled').sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,4);$('dashboardAppointmentBody').innerHTML=upcoming.length?upcoming.map(a=>`<tr><td>${escapeHtml(patientById(a.patientId)?.name||a.patientName||'Paciente')}</td><td>${a.date===today?'Hoje, ':formatDateBR(a.date)+' · '}${escapeHtml(a.time)}</td><td><span class="status-pill scheduled">${escapeHtml(a.type)}</span></td></tr>`).join(''):'<tr><td colspan="3" class="dashboard-appointment-empty">Sem próximas consultas.</td></tr>'}
+  function renderFinance(){const now=new Date(),ym=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,month=state.appointments.filter(a=>a.date.startsWith(ym)&&a.status!=='cancelled'),done=month.filter(a=>a.status==='done'),pending=month.filter(a=>a.status==='scheduled'),received=done.reduce((s,a)=>s+Number(a.value||0),0),expected=pending.reduce((s,a)=>s+Number(a.value||0),0);$('financeReceived').textContent=money(received);$('financePending').textContent=money(expected);$('financePaidCount').textContent=done.length;$('financeTicket').textContent=money(done.length?received/done.length:0);$('financeTableBody').innerHTML=month.length?[...month].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).map(a=>`<tr><td>${formatDateBR(a.date)} ${escapeHtml(a.time)}</td><td>${escapeHtml(patientById(a.patientId)?.name||a.patientName||'Paciente')}</td><td>${escapeHtml(a.type)}</td><td><span class="status-pill ${statusClass(a.status)}">${statusLabel(a.status)}</span></td><td>${money(a.value)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty-state">Sem movimentações neste mês.</td></tr>'}
+  function fillAppointmentPatients(selected=''){const s=$('appointmentPatient');s.innerHTML='<option value="">Selecione um paciente</option>'+state.patients.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+  function openAppointmentModal(id=''){const a=id?state.appointments.find(x=>x.id===id):null;fillAppointmentPatients(a?.patientId||state.currentPatientId||'');$('appointmentModalTitle').textContent=a?'Editar consulta':'Agendar consulta';$('appointmentId').value=a?.id||'';$('appointmentDate').value=a?.date||todayISO();$('appointmentTime').value=a?.time||'09:00';$('appointmentType').value=a?.type||'Retorno';$('appointmentValue').value=a?.value??200;$('appointmentNotes').value=a?.notes||'';openModal('appointmentModal')}
+  async function updateAppointmentStatus(id,status){try{await LabzAPI.updateAppointment(id,{status});await refreshAll()}catch(err){showError(err)}}
+  $('newAppointmentBtn')?.addEventListener('click',()=>openAppointmentModal());$('agendaFilters')?.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{state.agendaFilter=btn.dataset.agendaFilter;document.querySelectorAll('#agendaFilters button').forEach(b=>b.classList.toggle('active',b===btn));renderAgenda()}));
+  $('appointmentForm')?.addEventListener('submit',async e=>{e.preventDefault();const id=$('appointmentId').value,old=state.appointments.find(a=>a.id===id);const data={patientId:$('appointmentPatient').value,date:$('appointmentDate').value,time:$('appointmentTime').value,type:$('appointmentType').value,value:Number($('appointmentValue').value||0),notes:$('appointmentNotes').value.trim(),status:old?.status||'scheduled'};try{id?await LabzAPI.updateAppointment(id,data):await LabzAPI.createAppointment(data);closeModal('appointmentModal');await refreshAll()}catch(err){showError(err)}});
+
+</script>
+
+
+</body>
+</html>
