@@ -474,6 +474,13 @@
   .login-card{width:min(440px,100%);background:var(--paper);border-radius:24px;padding:30px;box-shadow:var(--shadow);}
   .login-card h2{font-size:2rem;margin-bottom:8px;}
   .login-card p{color:var(--ink-soft);margin-bottom:20px;}
+  .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--paper-dim);padding:5px;border-radius:14px;margin-bottom:20px;}
+  .auth-tab{border:0;background:transparent;border-radius:10px;padding:10px 12px;font-weight:700;color:var(--ink-soft);cursor:pointer;}
+  .auth-tab.active{background:#fff;color:var(--ink);box-shadow:0 2px 10px rgba(20,32,27,.08);}
+  .auth-pane{display:none}.auth-pane.active{display:block}
+  .auth-hint{font-size:.78rem;color:var(--ink-soft);margin-top:-8px;margin-bottom:12px;}
+  .account-btn{width:100%;margin-top:10px;border:1px solid rgba(243,244,239,.18);background:transparent;color:#fff;border-radius:12px;padding:10px 12px;font-weight:700;cursor:pointer;}
+  .account-btn:hover{background:rgba(255,255,255,.06);}
   .field{margin-bottom:14px;}
   .field label{display:block;font-size:.82rem;font-weight:700;margin-bottom:6px;}
   .field input{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;outline:none;}
@@ -883,12 +890,57 @@
 <div class="login-overlay" id="loginOverlay" aria-hidden="true">
   <div class="login-card">
     <div class="labz-wordmark" style="margin-bottom:18px;">Lab<span>z</span></div>
-    <h2>Bem-vindo de volta</h2>
-    <p>Entre na área do nutricionista. Seus dados são carregados com segurança pela API do Labz.</p>
-    <form id="loginForm">
-      <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" placeholder="voce@consultorio.com" required></div>
-      <div class="field"><label for="loginPassword">Senha</label><input id="loginPassword" type="password" placeholder="Sua senha" required></div>
-      <div class="login-actions"><button class="app-primary" type="submit">Entrar</button><button class="app-secondary" type="button" id="cancelLogin">Voltar</button></div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" type="button" data-auth-tab="login">Entrar</button>
+      <button class="auth-tab" type="button" data-auth-tab="register">Criar conta</button>
+    </div>
+
+    <div class="auth-pane active" data-auth-pane="login">
+      <h2>Bem-vindo de volta</h2>
+      <p>Entre na sua área de nutricionista.</p>
+      <form id="loginForm">
+        <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" autocomplete="email" placeholder="voce@consultorio.com" required></div>
+        <div class="field"><label for="loginPassword">Senha</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Sua senha" required></div>
+        <div class="login-actions"><button class="app-primary" type="submit">Entrar</button><button class="app-secondary" type="button" id="cancelLogin">Voltar</button></div>
+      </form>
+    </div>
+
+    <div class="auth-pane" data-auth-pane="register">
+      <h2>Crie sua conta</h2>
+      <p>Comece seu consultório no Labz com um ambiente separado para seus pacientes.</p>
+      <form id="registerForm">
+        <div class="field"><label for="registerName">Nome completo</label><input id="registerName" autocomplete="name" required></div>
+        <div class="two-fields">
+          <div class="field"><label for="registerEmail">E-mail</label><input id="registerEmail" type="email" autocomplete="email" required></div>
+          <div class="field"><label for="registerCrn">CRN</label><input id="registerCrn" placeholder="Ex.: CRN-6 12345"></div>
+        </div>
+        <div class="two-fields">
+          <div class="field"><label for="registerClinic">Consultório</label><input id="registerClinic" placeholder="Nome do consultório"></div>
+          <div class="field"><label for="registerPhone">Telefone</label><input id="registerPhone" autocomplete="tel" placeholder="(83) 99999-9999"></div>
+        </div>
+        <div class="two-fields">
+          <div class="field"><label for="registerPassword">Senha</label><input id="registerPassword" type="password" autocomplete="new-password" minlength="8" required></div>
+          <div class="field"><label for="registerPasswordConfirm">Confirmar senha</label><input id="registerPasswordConfirm" type="password" autocomplete="new-password" minlength="8" required></div>
+        </div>
+        <div class="auth-hint">Use pelo menos 8 caracteres.</div>
+        <div class="login-actions"><button class="app-primary" type="submit">Criar conta</button><button class="app-secondary" type="button" id="cancelRegister">Voltar</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal-labz" id="accountModal">
+  <div class="modal-card">
+    <h3>Minha conta</h3>
+    <p class="small-muted" id="accountEmail" style="margin-bottom:16px;"></p>
+    <form id="accountForm">
+      <div class="field"><label for="accountName">Nome completo</label><input id="accountName" required></div>
+      <div class="two-fields">
+        <div class="field"><label for="accountCrn">CRN</label><input id="accountCrn"></div>
+        <div class="field"><label for="accountPhone">Telefone</label><input id="accountPhone"></div>
+      </div>
+      <div class="field"><label for="accountClinic">Consultório</label><input id="accountClinic"></div>
+      <div class="login-actions"><button class="app-primary" type="submit">Salvar perfil</button><button class="app-secondary" type="button" data-close-modal="accountModal">Cancelar</button></div>
     </form>
   </div>
 </div>
@@ -903,7 +955,7 @@
       <button data-view="agenda">Agenda</button>
       <button data-view="finance">Financeiro</button>
     </nav>
-    <div class="app-sidebar-bottom"><div class="app-user">Rafael Diaz<br><small>Nutricionista</small></div><button id="logoutBtn" class="app-secondary" style="width:100%;margin-top:12px;">Sair</button></div>
+    <div class="app-sidebar-bottom"><div class="app-user">Nutricionista<br><small>Conta Labz</small></div><button id="accountBtn" class="account-btn">Minha conta</button><button id="logoutBtn" class="app-secondary" style="width:100%;margin-top:10px;">Sair</button></div>
   </aside>
   <main class="app-main">
     <section class="app-view active" data-view-panel="dashboard">
@@ -1048,7 +1100,11 @@
     return data;
   };
   const LabzAPI={
-    me:()=>api('/auth/me'), login:(email,password)=>api('/auth/login',{method:'POST',body:JSON.stringify({email,password})}), logout:()=>api('/auth/logout',{method:'POST'}),
+    me:()=>api('/auth/me'),
+    login:(email,password)=>api('/auth/login',{method:'POST',body:JSON.stringify({email,password})}),
+    register:data=>api('/auth/register',{method:'POST',body:JSON.stringify(data)}),
+    updateProfile:data=>api('/auth/profile',{method:'PUT',body:JSON.stringify(data)}),
+    logout:()=>api('/auth/logout',{method:'POST'}),
     patients:()=>api('/patients'), createPatient:d=>api('/patients',{method:'POST',body:JSON.stringify(d)}), updatePatient:(id,d)=>api('/patients/'+id,{method:'PUT',body:JSON.stringify(d)}),
     appointments:()=>api('/appointments'), createAppointment:d=>api('/appointments',{method:'POST',body:JSON.stringify(d)}), updateAppointment:(id,d)=>api('/appointments/'+id,{method:'PUT',body:JSON.stringify(d)}),
     diets:()=>api('/diets'), createDiet:d=>api('/diets',{method:'POST',body:JSON.stringify(d)}), updateDiet:(id,d)=>api('/diets/'+id,{method:'PUT',body:JSON.stringify(d)})
@@ -1071,7 +1127,13 @@
   const patientById=id=>state.patients.find(p=>p.id===id);
 
   function switchView(view){document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));document.querySelector(`[data-view-panel="${view}"]`)?.classList.add('active');document.querySelectorAll('.app-nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));}
-  function openApp(){landingNodes.forEach(el=>el.style.display='none');loginOverlay.classList.remove('active');appShell.classList.add('active');const u=document.querySelector('.app-user');if(u&&state.user)u.innerHTML=`${escapeHtml(state.user.name)}<br><small>Nutricionista</small>`;const h=document.querySelector('[data-view-panel=\"dashboard\"] .app-topbar h1');if(h&&state.user)h.textContent=`Olá, ${state.user.name.split(' ')[0]}`;}
+  function renderCurrentUser(){
+    const u=document.querySelector('.app-user');
+    if(u&&state.user)u.innerHTML=`${escapeHtml(state.user.name)}<br><small>${escapeHtml(state.user.clinicName||'Nutricionista')}</small>`;
+    const h=document.querySelector('[data-view-panel=\"dashboard\"] .app-topbar h1');
+    if(h&&state.user)h.textContent=`Olá, ${state.user.name.split(' ')[0]}`;
+  }
+  function openApp(){landingNodes.forEach(el=>el.style.display='none');loginOverlay.classList.remove('active');appShell.classList.add('active');renderCurrentUser();}
   function closeApp(){appShell.classList.remove('active');landingNodes.forEach(el=>el.style.display='');window.scrollTo({top:0,behavior:'smooth'});}
   function showError(err){console.error(err);alert(err?.message||'Algo deu errado.');}
   async function refreshAll(){
@@ -1081,8 +1143,78 @@
   }
 
   // Auth
-  $('openAppBtn')?.addEventListener('click',showLogin); $('navLoginBtn')?.addEventListener('click',showLogin); $('cancelLogin')?.addEventListener('click',()=>closeModal('loginOverlay'));
-  $('loginForm')?.addEventListener('submit',async e=>{e.preventDefault();const btn=e.currentTarget.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Entrando...';try{const r=await LabzAPI.login($('loginEmail').value,$('loginPassword').value);state.user=r.user;openApp();await refreshAll();}catch(err){showError(err)}finally{btn.disabled=false;btn.textContent='Entrar'}});
+  function selectAuthTab(tab){
+    document.querySelectorAll('[data-auth-tab]').forEach(b=>b.classList.toggle('active',b.dataset.authTab===tab));
+    document.querySelectorAll('[data-auth-pane]').forEach(p=>p.classList.toggle('active',p.dataset.authPane===tab));
+  }
+  document.querySelectorAll('[data-auth-tab]').forEach(b=>b.addEventListener('click',()=>selectAuthTab(b.dataset.authTab)));
+  $('openAppBtn')?.addEventListener('click',()=>{selectAuthTab('login');showLogin()});
+  $('navLoginBtn')?.addEventListener('click',()=>{selectAuthTab('login');showLogin()});
+  $('cancelLogin')?.addEventListener('click',()=>closeModal('loginOverlay'));
+  $('cancelRegister')?.addEventListener('click',()=>closeModal('loginOverlay'));
+
+  $('loginForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const btn=e.currentTarget.querySelector('button[type=submit]');
+    btn.disabled=true;btn.textContent='Entrando...';
+    try{
+      const r=await LabzAPI.login($('loginEmail').value,$('loginPassword').value);
+      state.user=r.user;openApp();await refreshAll();
+    }catch(err){showError(err)}
+    finally{btn.disabled=false;btn.textContent='Entrar'}
+  });
+
+  $('registerForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const password=$('registerPassword').value;
+    if(password!==$('registerPasswordConfirm').value) return showError(new Error('As senhas não coincidem'));
+    const btn=e.currentTarget.querySelector('button[type=submit]');
+    btn.disabled=true;btn.textContent='Criando conta...';
+    try{
+      const r=await LabzAPI.register({
+        name:$('registerName').value.trim(),
+        email:$('registerEmail').value.trim(),
+        password,
+        crn:$('registerCrn').value.trim(),
+        phone:$('registerPhone').value.trim(),
+        clinicName:$('registerClinic').value.trim()
+      });
+      state.user=r.user;
+      e.currentTarget.reset();
+      openApp();
+      await refreshAll();
+    }catch(err){showError(err)}
+    finally{btn.disabled=false;btn.textContent='Criar conta'}
+  });
+
+  $('accountBtn')?.addEventListener('click',()=>{
+    if(!state.user)return;
+    $('accountName').value=state.user.name||'';
+    $('accountCrn').value=state.user.crn||'';
+    $('accountPhone').value=state.user.phone||'';
+    $('accountClinic').value=state.user.clinicName||'';
+    $('accountEmail').textContent=state.user.email||'';
+    openModal('accountModal');
+  });
+
+  $('accountForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const btn=e.currentTarget.querySelector('button[type=submit]');
+    btn.disabled=true;btn.textContent='Salvando...';
+    try{
+      const r=await LabzAPI.updateProfile({
+        name:$('accountName').value.trim(),
+        crn:$('accountCrn').value.trim(),
+        phone:$('accountPhone').value.trim(),
+        clinicName:$('accountClinic').value.trim()
+      });
+      state.user=r.user;
+      renderCurrentUser();
+      closeModal('accountModal');
+    }catch(err){showError(err)}
+    finally{btn.disabled=false;btn.textContent='Salvar perfil'}
+  });
+
   $('logoutBtn')?.addEventListener('click',async()=>{try{await LabzAPI.logout()}finally{state.user=null;closeApp()}});
   (async()=>{try{state.user=await LabzAPI.me();openApp();await refreshAll()}catch{}})();
 

@@ -68,3 +68,16 @@ Depois abra PR para `DEV`.
 - entidades do consultório são consultadas com `ownerId`.
 
 Antes de produção ainda devem entrar recuperação de senha, verificação de e-mail, CSRF explícito se a arquitetura mudar, rate limiting, logs/auditoria, política LGPD, backups e testes automatizados.
+
+## Auth do nutricionista
+
+A branch `feat/auth-nutritionist` adiciona cadastro real de nutricionista, perfil da conta (nome, CRN, telefone e consultório), sessão persistente por cookie HttpOnly e mantém o isolamento de dados por `ownerId`.
+
+Após aplicar os arquivos desta versão, rode:
+
+```bash
+npm run db:push
+npm run dev
+```
+
+Teste criando duas contas diferentes e confirme que cada uma enxerga apenas os próprios pacientes.
