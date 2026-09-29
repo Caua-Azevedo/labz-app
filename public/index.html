@@ -929,6 +929,31 @@
   </div>
 </div>
 
+<div class="modal-labz" id="onboardingModal" style="z-index:1200;">
+  <div class="modal-card wide">
+    <div class="labz-wordmark" style="margin-bottom:12px;">Lab<span>z</span></div>
+    <div class="small-muted" style="margin-bottom:6px;">CONFIGURAÇÃO INICIAL</div>
+    <h2 style="margin:0 0 8px;">Vamos preparar seu consultório</h2>
+    <p class="small-muted" style="margin-bottom:20px;">Essas informações ficam salvas na sua conta e podem ser alteradas depois.</p>
+    <form id="onboardingForm">
+      <div class="two-fields">
+        <div class="field"><label for="onboardingCrn">CRN</label><input id="onboardingCrn" placeholder="Ex.: CRN-6 12345" required></div>
+        <div class="field"><label for="onboardingPhone">Telefone</label><input id="onboardingPhone" autocomplete="tel" required></div>
+      </div>
+      <div class="field"><label for="onboardingClinic">Nome do consultório</label><input id="onboardingClinic" required></div>
+      <div class="two-fields">
+        <div class="field"><label for="onboardingMode">Tipo de atendimento</label><select id="onboardingMode" required><option value="both">Presencial e online</option><option value="presential">Presencial</option><option value="online">Online</option></select></div>
+        <div class="field"><label for="onboardingDuration">Duração padrão</label><select id="onboardingDuration" required><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60" selected>60 minutos</option><option value="90">90 minutos</option><option value="120">120 minutos</option></select></div>
+      </div>
+      <div class="two-fields">
+        <div class="field"><label for="onboardingValue">Valor padrão da consulta (R$)</label><input id="onboardingValue" type="number" min="0" step="0.01" value="200" required></div>
+        <div class="field"><label>Localização</label><div style="display:grid;grid-template-columns:1fr 90px;gap:8px;"><input id="onboardingCity" placeholder="Cidade" required><input id="onboardingState" maxlength="2" placeholder="UF" required></div></div>
+      </div>
+      <div class="login-actions"><button class="app-primary" type="submit">Concluir e ir para o dashboard</button></div>
+    </form>
+  </div>
+</div>
+
 <div class="modal-labz" id="accountModal">
   <div class="modal-card">
     <h3>Minha conta</h3>
@@ -1104,6 +1129,7 @@
     login:(email,password)=>api('/auth/login',{method:'POST',body:JSON.stringify({email,password})}),
     register:data=>api('/auth/register',{method:'POST',body:JSON.stringify(data)}),
     updateProfile:data=>api('/auth/profile',{method:'PUT',body:JSON.stringify(data)}),
+    completeOnboarding:data=>api('/auth/onboarding',{method:'PUT',body:JSON.stringify(data)}),
     logout:()=>api('/auth/logout',{method:'POST'}),
     patients:()=>api('/patients'), createPatient:d=>api('/patients',{method:'POST',body:JSON.stringify(d)}), updatePatient:(id,d)=>api('/patients/'+id,{method:'PUT',body:JSON.stringify(d)}),
     appointments:()=>api('/appointments'), createAppointment:d=>api('/appointments',{method:'POST',body:JSON.stringify(d)}), updateAppointment:(id,d)=>api('/appointments/'+id,{method:'PUT',body:JSON.stringify(d)}),
@@ -1134,6 +1160,7 @@
     if(h&&state.user)h.textContent=`Olá, ${state.user.name.split(' ')[0]}`;
   }
   function openApp(){landingNodes.forEach(el=>el.style.display='none');loginOverlay.classList.remove('active');appShell.classList.add('active');renderCurrentUser();}
+  function requireOnboarding(){if(state.user&&!state.user.onboardingCompleted){$('onboardingCrn').value=state.user.crn||'';$('onboardingPhone').value=state.user.phone||'';$('onboardingClinic').value=state.user.clinicName||'';openModal('onboardingModal');return true}return false}
   function closeApp(){appShell.classList.remove('active');landingNodes.forEach(el=>el.style.display='');window.scrollTo({top:0,behavior:'smooth'});}
   function showError(err){console.error(err);alert(err?.message||'Algo deu errado.');}
   async function refreshAll(){
@@ -1159,7 +1186,7 @@
     btn.disabled=true;btn.textContent='Entrando...';
     try{
       const r=await LabzAPI.login($('loginEmail').value,$('loginPassword').value);
-      state.user=r.user;openApp();await refreshAll();
+      state.user=r.user;openApp();if(!requireOnboarding())await refreshAll();
     }catch(err){showError(err)}
     finally{btn.disabled=false;btn.textContent='Entrar'}
   });
@@ -1182,9 +1209,24 @@
       state.user=r.user;
       e.currentTarget.reset();
       openApp();
-      await refreshAll();
+      requireOnboarding();
     }catch(err){showError(err)}
     finally{btn.disabled=false;btn.textContent='Criar conta'}
+  });
+
+  $('onboardingForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const btn=e.currentTarget.querySelector('button[type=submit]');
+    btn.disabled=true;btn.textContent='Preparando seu espaço...';
+    try{
+      const r=await LabzAPI.completeOnboarding({
+        crn:$('onboardingCrn').value.trim(),phone:$('onboardingPhone').value.trim(),clinicName:$('onboardingClinic').value.trim(),
+        serviceMode:$('onboardingMode').value,consultationMinutes:Number($('onboardingDuration').value),
+        defaultConsultationValue:Number($('onboardingValue').value),city:$('onboardingCity').value.trim(),state:$('onboardingState').value.trim()
+      });
+      state.user=r.user;renderCurrentUser();closeModal('onboardingModal');await refreshAll();
+    }catch(err){showError(err)}
+    finally{btn.disabled=false;btn.textContent='Concluir e ir para o dashboard'}
   });
 
   $('accountBtn')?.addEventListener('click',()=>{
@@ -1216,7 +1258,7 @@
   });
 
   $('logoutBtn')?.addEventListener('click',async()=>{try{await LabzAPI.logout()}finally{state.user=null;closeApp()}});
-  (async()=>{try{state.user=await LabzAPI.me();openApp();await refreshAll()}catch{}})();
+  (async()=>{try{state.user=await LabzAPI.me();openApp();if(!requireOnboarding())await refreshAll()}catch{}})();
 
   // Navigation & generic modal close
   document.querySelectorAll('.app-nav button').forEach(btn=>btn.addEventListener('click',()=>{switchView(btn.dataset.view);if(btn.dataset.view==='diets')renderDiets();if(btn.dataset.view==='agenda')renderAgenda();if(btn.dataset.view==='dashboard')renderDashboard();if(btn.dataset.view==='finance')renderFinance();}));

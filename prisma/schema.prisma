@@ -16,6 +16,12 @@ model User {
   crn          String?
   phone        String?
   clinicName   String?
+  serviceMode String?
+  consultationMinutes Int?
+  defaultConsultationValueCents Int?
+  city         String?
+  state        String?
+  onboardingCompleted Boolean @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   patients     Patient[]
