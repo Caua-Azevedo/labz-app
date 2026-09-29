@@ -30,7 +30,10 @@ async function auth(req,res,next){
 }
 const safeUser=u=>({
   id:u.id,name:u.name,email:u.email,role:u.role,
-  crn:u.crn||'',phone:u.phone||'',clinicName:u.clinicName||''
+  crn:u.crn||'',phone:u.phone||'',clinicName:u.clinicName||'',
+  serviceMode:u.serviceMode||'',consultationMinutes:u.consultationMinutes||60,
+  defaultConsultationValue:u.defaultConsultationValueCents?u.defaultConsultationValueCents/100:0,
+  city:u.city||'',state:u.state||'',onboardingCompleted:Boolean(u.onboardingCompleted)
 });
 const patientOut=p=>({...p,start:p.createdAt.toLocaleDateString('pt-BR')});
 const appointmentOut=a=>({
@@ -89,6 +92,28 @@ app.put('/api/auth/profile',auth,async(req,res)=>{
       clinicName:parsed.data.clinicName||null
     }
   });
+  res.json({user:safeUser(user)});
+});
+
+app.put('/api/auth/onboarding',auth,async(req,res)=>{
+  const parsed=z.object({
+    crn:z.string().trim().min(2).max(40),
+    phone:z.string().trim().min(8).max(30),
+    clinicName:z.string().trim().min(2).max(120),
+    serviceMode:z.enum(['presential','online','both']),
+    consultationMinutes:z.coerce.number().int().min(15).max(240),
+    defaultConsultationValue:z.coerce.number().min(0).max(100000),
+    city:z.string().trim().min(2).max(120),
+    state:z.string().trim().length(2).transform(v=>v.toUpperCase())
+  }).safeParse(req.body);
+  if(!parsed.success) return res.status(400).json({error:'Confira os dados do onboarding'});
+  const d=parsed.data;
+  const user=await prisma.user.update({where:{id:req.user.id},data:{
+    crn:d.crn,phone:d.phone,clinicName:d.clinicName,serviceMode:d.serviceMode,
+    consultationMinutes:d.consultationMinutes,
+    defaultConsultationValueCents:Math.round(d.defaultConsultationValue*100),
+    city:d.city,state:d.state,onboardingCompleted:true
+  }});
   res.json({user:safeUser(user)});
 });
 
