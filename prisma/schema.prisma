@@ -13,6 +13,15 @@ model User {
   email        String   @unique
   passwordHash String
   role         String   @default("NUTRITIONIST")
+  crn          String?
+  phone        String?
+  clinicName   String?
+  serviceMode String?
+  consultationMinutes Int?
+  defaultConsultationValueCents Int?
+  city         String?
+  state        String?
+  onboardingCompleted Boolean @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   patients     Patient[]
@@ -31,6 +40,9 @@ model Patient {
   adherence   Int      @default(0)
   currentWeight Float?
   notes       String?
+  anamnesis   Json?
+  evolutions  Json     @default("[]")
+  measures    Json     @default("[]")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   appointments Appointment[]

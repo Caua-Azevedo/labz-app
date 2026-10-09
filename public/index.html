@@ -474,6 +474,13 @@
   .login-card{width:min(440px,100%);background:var(--paper);border-radius:24px;padding:30px;box-shadow:var(--shadow);}
   .login-card h2{font-size:2rem;margin-bottom:8px;}
   .login-card p{color:var(--ink-soft);margin-bottom:20px;}
+  .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--paper-dim);padding:5px;border-radius:14px;margin-bottom:20px;}
+  .auth-tab{border:0;background:transparent;border-radius:10px;padding:10px 12px;font-weight:700;color:var(--ink-soft);cursor:pointer;}
+  .auth-tab.active{background:#fff;color:var(--ink);box-shadow:0 2px 10px rgba(20,32,27,.08);}
+  .auth-pane{display:none}.auth-pane.active{display:block}
+  .auth-hint{font-size:.78rem;color:var(--ink-soft);margin-top:-8px;margin-bottom:12px;}
+  .account-btn{width:100%;margin-top:10px;border:1px solid rgba(243,244,239,.18);background:transparent;color:#fff;border-radius:12px;padding:10px 12px;font-weight:700;cursor:pointer;}
+  .account-btn:hover{background:rgba(255,255,255,.06);}
   .field{margin-bottom:14px;}
   .field label{display:block;font-size:.82rem;font-weight:700;margin-bottom:6px;}
   .field input{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;outline:none;}
@@ -883,12 +890,82 @@
 <div class="login-overlay" id="loginOverlay" aria-hidden="true">
   <div class="login-card">
     <div class="labz-wordmark" style="margin-bottom:18px;">Lab<span>z</span></div>
-    <h2>Bem-vindo de volta</h2>
-    <p>Entre na área do nutricionista. Nesta primeira versão, os dados ficam salvos no seu navegador.</p>
-    <form id="loginForm">
-      <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" placeholder="voce@consultorio.com" required></div>
-      <div class="field"><label for="loginPassword">Senha</label><input id="loginPassword" type="password" placeholder="Sua senha" required></div>
-      <div class="login-actions"><button class="app-primary" type="submit">Entrar</button><button class="app-secondary" type="button" id="cancelLogin">Voltar</button></div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" type="button" data-auth-tab="login">Entrar</button>
+      <button class="auth-tab" type="button" data-auth-tab="register">Criar conta</button>
+    </div>
+
+    <div class="auth-pane active" data-auth-pane="login">
+      <h2>Bem-vindo de volta</h2>
+      <p>Entre na sua área de nutricionista.</p>
+      <form id="loginForm">
+        <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" autocomplete="email" placeholder="voce@consultorio.com" required></div>
+        <div class="field"><label for="loginPassword">Senha</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Sua senha" required></div>
+        <div class="login-actions"><button class="app-primary" type="submit">Entrar</button><button class="app-secondary" type="button" id="cancelLogin">Voltar</button></div>
+      </form>
+    </div>
+
+    <div class="auth-pane" data-auth-pane="register">
+      <h2>Crie sua conta</h2>
+      <p>Comece seu consultório no Labz com um ambiente separado para seus pacientes.</p>
+      <form id="registerForm">
+        <div class="field"><label for="registerName">Nome completo</label><input id="registerName" autocomplete="name" required></div>
+        <div class="two-fields">
+          <div class="field"><label for="registerEmail">E-mail</label><input id="registerEmail" type="email" autocomplete="email" required></div>
+          <div class="field"><label for="registerCrn">CRN</label><input id="registerCrn" placeholder="Ex.: CRN-6 12345"></div>
+        </div>
+        <div class="two-fields">
+          <div class="field"><label for="registerClinic">Consultório</label><input id="registerClinic" placeholder="Nome do consultório"></div>
+          <div class="field"><label for="registerPhone">Telefone</label><input id="registerPhone" autocomplete="tel" placeholder="(83) 99999-9999"></div>
+        </div>
+        <div class="two-fields">
+          <div class="field"><label for="registerPassword">Senha</label><input id="registerPassword" type="password" autocomplete="new-password" minlength="8" required></div>
+          <div class="field"><label for="registerPasswordConfirm">Confirmar senha</label><input id="registerPasswordConfirm" type="password" autocomplete="new-password" minlength="8" required></div>
+        </div>
+        <div class="auth-hint">Use pelo menos 8 caracteres.</div>
+        <div class="login-actions"><button class="app-primary" type="submit">Criar conta</button><button class="app-secondary" type="button" id="cancelRegister">Voltar</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal-labz" id="onboardingModal" style="z-index:1200;">
+  <div class="modal-card wide">
+    <div class="labz-wordmark" style="margin-bottom:12px;">Lab<span>z</span></div>
+    <div class="small-muted" style="margin-bottom:6px;">CONFIGURAÇÃO INICIAL</div>
+    <h2 style="margin:0 0 8px;">Vamos preparar seu consultório</h2>
+    <p class="small-muted" style="margin-bottom:20px;">Essas informações ficam salvas na sua conta e podem ser alteradas depois.</p>
+    <form id="onboardingForm">
+      <div class="two-fields">
+        <div class="field"><label for="onboardingCrn">CRN</label><input id="onboardingCrn" placeholder="Ex.: CRN-6 12345" required></div>
+        <div class="field"><label for="onboardingPhone">Telefone</label><input id="onboardingPhone" autocomplete="tel" required></div>
+      </div>
+      <div class="field"><label for="onboardingClinic">Nome do consultório</label><input id="onboardingClinic" required></div>
+      <div class="two-fields">
+        <div class="field"><label for="onboardingMode">Tipo de atendimento</label><select id="onboardingMode" required><option value="both">Presencial e online</option><option value="presential">Presencial</option><option value="online">Online</option></select></div>
+        <div class="field"><label for="onboardingDuration">Duração padrão</label><select id="onboardingDuration" required><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60" selected>60 minutos</option><option value="90">90 minutos</option><option value="120">120 minutos</option></select></div>
+      </div>
+      <div class="two-fields">
+        <div class="field"><label for="onboardingValue">Valor padrão da consulta (R$)</label><input id="onboardingValue" type="number" min="0" step="0.01" value="200" required></div>
+        <div class="field"><label>Localização</label><div style="display:grid;grid-template-columns:1fr 90px;gap:8px;"><input id="onboardingCity" placeholder="Cidade" required><input id="onboardingState" maxlength="2" placeholder="UF" required></div></div>
+      </div>
+      <div class="login-actions"><button class="app-primary" type="submit">Concluir e ir para o dashboard</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-labz" id="accountModal">
+  <div class="modal-card">
+    <h3>Minha conta</h3>
+    <p class="small-muted" id="accountEmail" style="margin-bottom:16px;"></p>
+    <form id="accountForm">
+      <div class="field"><label for="accountName">Nome completo</label><input id="accountName" required></div>
+      <div class="two-fields">
+        <div class="field"><label for="accountCrn">CRN</label><input id="accountCrn"></div>
+        <div class="field"><label for="accountPhone">Telefone</label><input id="accountPhone"></div>
+      </div>
+      <div class="field"><label for="accountClinic">Consultório</label><input id="accountClinic"></div>
+      <div class="login-actions"><button class="app-primary" type="submit">Salvar perfil</button><button class="app-secondary" type="button" data-close-modal="accountModal">Cancelar</button></div>
     </form>
   </div>
 </div>
@@ -903,7 +980,7 @@
       <button data-view="agenda">Agenda</button>
       <button data-view="finance">Financeiro</button>
     </nav>
-    <div class="app-sidebar-bottom"><div class="app-user">Rafael Diaz<br><small>Nutricionista</small></div><button id="logoutBtn" class="app-secondary" style="width:100%;margin-top:12px;">Sair</button></div>
+    <div class="app-sidebar-bottom"><div class="app-user">Nutricionista<br><small>Conta Labz</small></div><button id="accountBtn" class="account-btn">Minha conta</button><button id="logoutBtn" class="app-secondary" style="width:100%;margin-top:10px;">Sair</button></div>
   </aside>
   <main class="app-main">
     <section class="app-view active" data-view-panel="dashboard">
@@ -934,6 +1011,7 @@
       </div>
       <div class="profile-tabs" id="profileTabs">
         <button class="active" data-profile-tab="overview">Resumo</button>
+        <button data-profile-tab="details">Detalhes</button>
         <button data-profile-tab="anamnesis">Anamnese</button>
         <button data-profile-tab="evolution">Evolução</button>
         <button data-profile-tab="measures">Medidas</button>
@@ -948,6 +1026,29 @@
         <div class="profile-grid">
           <div class="panel-card"><h3>Última evolução</h3><div id="lastEvolution" class="notes-box">Nenhuma evolução registrada.</div></div>
           <div class="panel-card"><h3>Resumo da anamnese</h3><div id="anamnesisSummary" class="notes-box">Nenhuma anamnese registrada.</div></div>
+        </div>
+      </div>
+      <div class="profile-panel" data-profile-panel="details">
+        <div class="panel-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+            <div><h3 style="margin:0;">Dados do paciente</h3><div class="small-muted">Informações de contato, objetivo e observações gerais.</div></div>
+            <button class="app-primary" type="submit" form="patientDetailsForm">Salvar detalhes</button>
+          </div>
+          <form id="patientDetailsForm">
+            <div class="two-fields">
+              <div class="field"><label for="detailPatientName">Nome completo</label><input id="detailPatientName" required></div>
+              <div class="field"><label for="detailPatientGoal">Objetivo</label><input id="detailPatientGoal" placeholder="Ex.: hipertrofia, emagrecimento"></div>
+            </div>
+            <div class="two-fields">
+              <div class="field"><label for="detailPatientEmail">E-mail</label><input id="detailPatientEmail" type="email" placeholder="paciente@email.com"></div>
+              <div class="field"><label for="detailPatientPhone">Telefone</label><input id="detailPatientPhone" type="tel" inputmode="tel" placeholder="(00) 00000-0000"></div>
+            </div>
+            <div class="two-fields">
+              <div class="field"><label for="detailPatientAdherence">Adesão (%)</label><input id="detailPatientAdherence" type="number" min="0" max="100" value="0"></div>
+              <div class="field"><label for="detailPatientWeight">Peso atual (kg)</label><input id="detailPatientWeight" type="number" min="0" step="0.1" placeholder="Ex.: 78.5"></div>
+            </div>
+            <div class="field"><label for="detailPatientNotes">Observações gerais</label><textarea id="detailPatientNotes" rows="4" placeholder="Preferências, rotina, pontos importantes para acompanhar..."></textarea></div>
+          </form>
         </div>
       </div>
       <div class="profile-panel" data-profile-panel="anamnesis"><div class="panel-card"><h3>Anamnese e histórico</h3><div id="anamnesisFull" class="notes-box"></div></div></div>
@@ -1037,335 +1138,235 @@
   });
 
 
-  // ---------- MVP APP ----------
-  const loginOverlay = document.getElementById('loginOverlay');
-  const appShell = document.getElementById('appShell');
-  const landingNodes = [...document.body.children].filter(el => el.id !== 'loginOverlay' && el.id !== 'appShell' && !el.classList.contains('modal-labz') && el.tagName !== 'SCRIPT');
-  const showLogin = () => loginOverlay.classList.add('active');
-  document.getElementById('openAppBtn')?.addEventListener('click', showLogin);
-  document.getElementById('navLoginBtn')?.addEventListener('click', showLogin);
-  document.getElementById('cancelLogin')?.addEventListener('click', () => loginOverlay.classList.remove('active'));
-
-  function openApp(){
-    landingNodes.forEach(el => el.style.display='none');
-    loginOverlay.classList.remove('active');
-    appShell.classList.add('active');
-
-    renderPatients();
-    renderDiets();
-    renderAgenda();
-    renderDashboard();
-    renderFinance();
-  }
-  function closeApp(){
-    appShell.classList.remove('active');
-    landingNodes.forEach(el => el.style.display='');
-
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-  document.getElementById('loginForm')?.addEventListener('submit', e => {e.preventDefault();openApp();});
-  document.getElementById('logoutBtn')?.addEventListener('click', closeApp);
-
-  document.querySelectorAll('.app-nav button').forEach(btn => btn.addEventListener('click', () => {
-    switchView(btn.dataset.view);
-    if(btn.dataset.view==='diets') renderDiets();
-    if(btn.dataset.view==='agenda') renderAgenda();
-    if(btn.dataset.view==='dashboard') renderDashboard();
-    if(btn.dataset.view==='finance') renderFinance();
-  }));
-
-  const defaultPatients = [
-    {id:'ana',name:'Ana Beatriz',goal:'Emagrecimento',start:'28/07/2026',adherence:78,anamnesis:{complaint:'Redução de gordura corporal com rotina sustentável.',history:'Sem histórico clínico relevante informado.',allergies:'Nega alergias alimentares.',meds:'Não informado.',routine:'Treina 4x por semana. Dificuldade maior no período noturno.'},evolutions:[{date:'02/09/2026',weight:71.8,adherence:78,notes:'Boa adaptação ao plano. Relata menos fome à tarde e dificuldade em manter o jantar aos fins de semana.'}],measures:[{date:'28/07/2026',weight:74.6,waist:82,hip:103,fat:31.2},{date:'02/09/2026',weight:71.8,waist:78,hip:100,fat:29.4}],diet:{calories:1850,water:2.2,meals:[{name:'Café da manhã',items:'Ovos, pão integral e fruta'},{name:'Almoço',items:'Arroz, feijão, proteína magra e salada'},{name:'Lanche',items:'Iogurte natural, aveia e fruta'},{name:'Jantar',items:'Batata, frango e legumes'}]}},
-    {id:'carlos',name:'Carlos Eduardo',goal:'Performance',start:'19/08/2026',adherence:54,anamnesis:{complaint:'Melhorar performance e ganho de massa.',history:'Sem dados adicionais.',allergies:'Não informado.',meds:'Creatina.',routine:'Treino de musculação 5x/semana.'},evolutions:[{date:'03/09/2026',weight:82.4,adherence:54,notes:'Dificuldade para cumprir refeições no horário de trabalho. Ajustar opções práticas.'}],measures:[{date:'19/08/2026',weight:81.6,waist:86,hip:99,fat:16.8},{date:'03/09/2026',weight:82.4,waist:86,hip:99,fat:16.5}],diet:{calories:2850,water:3,meals:[{name:'Café da manhã',items:'Aveia, banana, ovos e leite'},{name:'Almoço',items:'Arroz, feijão, carne e legumes'},{name:'Pré-treino',items:'Pão, frango e fruta'},{name:'Jantar',items:'Arroz, proteína e vegetais'}]}},
-    {id:'julia',name:'Júlia Prado',goal:'Reeducação alimentar',start:'06/07/2026',adherence:91,anamnesis:{complaint:'Melhorar relação com alimentação e organização da rotina.',history:'Não informado.',allergies:'Intolerância à lactose relatada.',meds:'Não informado.',routine:'Rotina de trabalho híbrida; costuma cozinhar em casa.'},evolutions:[{date:'01/09/2026',weight:73.1,adherence:91,notes:'Excelente adesão. Mantém registros e relata maior autonomia nas escolhas alimentares.'}],measures:[{date:'06/07/2026',weight:78.4,waist:88,hip:108,fat:34.5},{date:'01/09/2026',weight:73.1,waist:82,hip:103,fat:31.1}],diet:{calories:1950,water:2.5,meals:[{name:'Café da manhã',items:'Tapioca, ovos e fruta'},{name:'Almoço',items:'Arroz, feijão, peixe e salada'},{name:'Lanche',items:'Iogurte sem lactose e fruta'},{name:'Jantar',items:'Sopa de legumes com proteína'}]}}
-  ];
-  const normalizePatients = items => items.map((p,i)=>({id:p.id || ('p'+Date.now()+i),anamnesis:p.anamnesis||{},evolutions:p.evolutions||[],measures:p.measures||[],diet:p.diet||{calories:'',water:'',meals:[]},...p}));
-  function getPatients(){
-    const raw=localStorage.getItem('labz_patients');
-    if(!raw){savePatients(defaultPatients);return normalizePatients(defaultPatients);}
-    try{return normalizePatients(JSON.parse(raw));}catch{return normalizePatients(defaultPatients);}
-  }
-  function savePatients(items){localStorage.setItem('labz_patients',JSON.stringify(items));}
-  function escapeHtml(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-  let currentPatientId=null;
-  function renderPatients(filter=''){
-    const tbody=document.getElementById('patientTableBody'); if(!tbody) return;
-    const patients=getPatients().filter(p => (p.name+' '+p.goal).toLowerCase().includes(filter.toLowerCase()));
-    tbody.innerHTML=patients.length ? patients.map(p=>`<tr><td><button class="patient-name-btn" data-patient-id="${escapeHtml(p.id)}">${escapeHtml(p.name)}</button></td><td>${escapeHtml(p.goal)}</td><td>${escapeHtml(p.start)}</td><td><span class="status-pill ${p.adherence>=70?'ok':''}">${p.adherence}%</span></td></tr>`).join('') : '<tr><td colspan="4" class="empty-state">Nenhum paciente encontrado.</td></tr>';
-    document.getElementById('statPatients').textContent=getPatients().length;
-    tbody.querySelectorAll('[data-patient-id]').forEach(btn=>btn.addEventListener('click',()=>openPatientProfile(btn.dataset.patientId)));
-  }
-  function switchView(view){
-    document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));
-    document.querySelector(`[data-view-panel="${view}"]`)?.classList.add('active');
-    document.querySelectorAll('.app-nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
-  }
-  function initials(name=''){return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();}
-  function fmt(value,suffix=''){return value===undefined||value===null||value===''?'—':`${value}${suffix}`;}
-  function getCurrentPatient(){return getPatients().find(p=>p.id===currentPatientId);}
-  function updatePatient(updated){const items=getPatients();const idx=items.findIndex(p=>p.id===updated.id);if(idx>=0){items[idx]=updated;savePatients(items);renderPatients();}}
-  function openPatientProfile(id){currentPatientId=id;switchView('patientProfile');renderPatientProfile();window.scrollTo({top:0,behavior:'smooth'});}
-  function renderPatientProfile(){
-    const p=getCurrentPatient(); if(!p) return;
-    document.getElementById('profileAvatar').textContent=initials(p.name);
-    document.getElementById('profileName').textContent=p.name;
-    document.getElementById('profileGoal').textContent=p.goal;
-    document.getElementById('profileStart').textContent=p.start;
-    const measures=[...(p.measures||[])]; const latest=measures.at(-1); const first=measures[0];
-    document.getElementById('metricWeight').textContent=latest?fmt(latest.weight,' kg'):'—';
-    const diff=latest&&first ? Number(latest.weight)-Number(first.weight) : null;
-    document.getElementById('metricChange').textContent=diff===null?'—':`${diff>0?'+':''}${diff.toFixed(1)} kg`;
-    document.getElementById('metricAdherence').textContent=fmt(p.adherence,'%');
-    const ev=(p.evolutions||[]).at(-1);
-    document.getElementById('lastEvolution').textContent=ev?`${ev.date} — ${ev.notes || 'Sem observações.'}`:'Nenhuma evolução registrada.';
-    const a=p.anamnesis||{};
-    document.getElementById('anamnesisSummary').textContent=[a.complaint,a.allergies&&`Alergias/intolerâncias: ${a.allergies}`].filter(Boolean).join('\n\n') || 'Nenhuma anamnese registrada.';
-    document.getElementById('anamnesisFull').textContent=[['Queixa principal / objetivo',a.complaint],['Histórico clínico',a.history],['Alergias / intolerâncias',a.allergies],['Medicamentos / suplementos',a.meds],['Rotina e observações',a.routine]].filter(x=>x[1]).map(x=>`${x[0]}\n${x[1]}`).join('\n\n') || 'Nenhuma anamnese registrada.';
-    const timeline=document.getElementById('evolutionTimeline');
-    timeline.innerHTML=(p.evolutions||[]).length ? [...p.evolutions].reverse().map(e=>`<div class="timeline-item"><div class="date">${escapeHtml(e.date)}</div><div><strong>${escapeHtml(e.notes||'Sem observações')}</strong><div class="small-muted">Peso: ${fmt(e.weight,' kg')}</div></div><span class="status-pill ${Number(e.adherence)>=70?'ok':''}">${fmt(e.adherence,'%')}</span></div>`).join('') : '<div class="empty-state">Nenhuma evolução registrada.</div>';
-    const mt=document.getElementById('measureTableBody');
-    mt.innerHTML=(p.measures||[]).length ? [...p.measures].reverse().map(m=>`<tr><td>${escapeHtml(m.date)}</td><td>${fmt(m.weight,' kg')}</td><td>${fmt(m.waist,' cm')}</td><td>${fmt(m.hip,' cm')}</td><td>${fmt(m.fat,'%')}</td></tr>`).join('') : '<tr><td colspan="5" class="empty-state">Nenhuma medição registrada.</td></tr>';
-    const d=p.diet||{meals:[]};
-    document.getElementById('dietPreview').innerHTML=`<div class="profile-grid" style="margin-bottom:16px;"><div class="metric-card"><small>Meta calórica</small><strong>${fmt(d.calories,' kcal')}</strong></div><div class="metric-card"><small>Água</small><strong>${fmt(d.water,' L')}</strong></div></div>${(d.meals||[]).length?(d.meals||[]).map(meal=>`<div class="diet-meal"><div class="diet-meal-head"><h4>${escapeHtml(meal.name)}</h4></div><div class="small-muted">${escapeHtml(meal.items)}</div></div>`).join(''):'<div class="empty-state">Nenhum plano alimentar cadastrado.</div>'}`;
-  }
-  document.getElementById('patientSearch')?.addEventListener('input', e=>renderPatients(e.target.value));
-  const patientModal=document.getElementById('patientModal');
-  const openPatientModal=()=>patientModal.classList.add('active');
-  document.getElementById('newPatientBtn')?.addEventListener('click',openPatientModal);
-  document.getElementById('quickPatientBtn')?.addEventListener('click',openPatientModal);
-  document.getElementById('cancelPatient')?.addEventListener('click',()=>patientModal.classList.remove('active'));
-  document.getElementById('patientForm')?.addEventListener('submit',e=>{
-    e.preventDefault(); const items=getPatients();
-    items.push({id:'p'+Date.now(),name:document.getElementById('patientName').value.trim(),goal:document.getElementById('patientGoal').value.trim(),start:new Date().toLocaleDateString('pt-BR'),adherence:Number(document.getElementById('patientAdherence').value||0),anamnesis:{},evolutions:[],measures:[],diet:{calories:'',water:'',meals:[]}});
-    savePatients(items); e.target.reset(); patientModal.classList.remove('active'); renderPatients();
-  });
-  document.getElementById('backToPatients')?.addEventListener('click',()=>switchView('patients'));
-  document.querySelectorAll('#profileTabs button').forEach(btn=>btn.addEventListener('click',()=>{
-    document.querySelectorAll('#profileTabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-    document.querySelectorAll('.profile-panel').forEach(p=>p.classList.remove('active'));
-    document.querySelector(`[data-profile-panel="${btn.dataset.profileTab}"]`)?.classList.add('active');
-  }));
-  const openModal=id=>document.getElementById(id)?.classList.add('active');
-  document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click',()=>document.getElementById(b.dataset.closeModal)?.classList.remove('active')));
-  function openAnamnesis(){const p=getCurrentPatient();if(!p)return;const a=p.anamnesis||{};['Complaint','History','Allergies','Meds','Routine'].forEach(k=>{const el=document.getElementById('anamnesis'+k); if(el) el.value=a[k.toLowerCase()]||''});openModal('anamnesisModal');}
-  document.getElementById('editAnamnesisBtn')?.addEventListener('click',openAnamnesis);
-  document.getElementById('anamnesisForm')?.addEventListener('submit',e=>{e.preventDefault();const p=getCurrentPatient();if(!p)return;p.anamnesis={complaint:document.getElementById('anamnesisComplaint').value.trim(),history:document.getElementById('anamnesisHistory').value.trim(),allergies:document.getElementById('anamnesisAllergies').value.trim(),meds:document.getElementById('anamnesisMeds').value.trim(),routine:document.getElementById('anamnesisRoutine').value.trim()};updatePatient(p);document.getElementById('anamnesisModal').classList.remove('active');renderPatientProfile();});
-  const openEvolution=()=>{const p=getCurrentPatient();if(!p)return;const last=(p.measures||[]).at(-1);document.getElementById('evolutionWeight').value=last?.weight||'';document.getElementById('evolutionAdherence').value=p.adherence??'';document.getElementById('evolutionNotes').value='';openModal('evolutionModal');};
-  document.getElementById('newEvolutionBtn')?.addEventListener('click',openEvolution);document.getElementById('newEvolutionBtn2')?.addEventListener('click',openEvolution);
-  document.getElementById('evolutionForm')?.addEventListener('submit',e=>{e.preventDefault();const p=getCurrentPatient();if(!p)return;const weight=Number(document.getElementById('evolutionWeight').value), adherence=Number(document.getElementById('evolutionAdherence').value);p.adherence=adherence;p.evolutions=p.evolutions||[];p.evolutions.push({date:new Date().toLocaleDateString('pt-BR'),weight,adherence,notes:document.getElementById('evolutionNotes').value.trim()});updatePatient(p);document.getElementById('evolutionModal').classList.remove('active');renderPatientProfile();});
-  document.getElementById('newMeasureBtn')?.addEventListener('click',()=>{const p=getCurrentPatient();if(!p)return;document.getElementById('measureWeight').value=(p.measures||[]).at(-1)?.weight||'';openModal('measureModal');});
-  document.getElementById('measureForm')?.addEventListener('submit',e=>{e.preventDefault();const p=getCurrentPatient();if(!p)return;p.measures=p.measures||[];p.measures.push({date:new Date().toLocaleDateString('pt-BR'),weight:Number(document.getElementById('measureWeight').value),waist:document.getElementById('measureWaist').value||'',hip:document.getElementById('measureHip').value||'',fat:document.getElementById('measureFat').value||''});updatePatient(p);e.target.reset();document.getElementById('measureModal').classList.remove('active');renderPatientProfile();});
-  function renderDietEditor(){const p=getCurrentPatient();if(!p)return;const d=p.diet||{meals:[]};document.getElementById('dietCalories').value=d.calories||'';document.getElementById('dietWater').value=d.water||'';const editor=document.getElementById('dietEditor');editor.innerHTML='';(d.meals||[]).forEach(m=>addMealEditor(m));}
-  function addMealEditor(meal={name:'',items:''}){const wrap=document.createElement('div');wrap.className='diet-meal diet-editor-row';wrap.innerHTML=`<div class="diet-meal-head"><h4>Refeição</h4><button type="button" class="danger-btn remove-meal">Remover</button></div><div class="two-fields"><div class="field"><label>Nome</label><input class="meal-name" value="${escapeHtml(meal.name)}" placeholder="Ex.: Café da manhã"></div><div class="field"><label>Alimentos / orientações</label><input class="meal-items" value="${escapeHtml(meal.items)}" placeholder="Ex.: ovos, pão integral e fruta"></div></div>`;wrap.querySelector('.remove-meal').addEventListener('click',()=>wrap.remove());document.getElementById('dietEditor').appendChild(wrap);}
-  document.getElementById('editDietBtn')?.addEventListener('click',()=>{renderDietEditor();openModal('dietModal');});
-  document.getElementById('addMealBtn')?.addEventListener('click',()=>addMealEditor());
-  document.getElementById('dietForm')?.addEventListener('submit',e=>{e.preventDefault();const p=getCurrentPatient();if(!p)return;const meals=[...document.querySelectorAll('.diet-editor-row')].map(r=>({name:r.querySelector('.meal-name').value.trim(),items:r.querySelector('.meal-items').value.trim()})).filter(m=>m.name||m.items);p.diet={calories:Number(document.getElementById('dietCalories').value)||'',water:Number(document.getElementById('dietWater').value)||'',meals};updatePatient(p);document.getElementById('dietModal').classList.remove('active');renderPatientProfile();});
-
-  // ---------- DIETAS ----------
-  const defaultDietTemplates = [
-    {id:'tpl1',name:'Emagrecimento equilibrado',patientId:'',isTemplate:true,calories:1800,water:2.5,notes:'Modelo base com quatro refeições e foco em saciedade.',meals:[{name:'Café da manhã',foods:[{name:'Ovos',qty:'2 un',kcal:140},{name:'Pão integral',qty:'2 fatias',kcal:130}]},{name:'Almoço',foods:[{name:'Arroz',qty:'120 g',kcal:156},{name:'Frango',qty:'150 g',kcal:248},{name:'Salada',qty:'à vontade',kcal:40}]},{name:'Lanche',foods:[{name:'Iogurte natural',qty:'170 g',kcal:110},{name:'Fruta',qty:'1 un',kcal:90}]},{name:'Jantar',foods:[{name:'Batata',qty:'180 g',kcal:140},{name:'Peixe',qty:'150 g',kcal:180}]}]},
-    {id:'tpl2',name:'Performance 2800 kcal',patientId:'',isTemplate:true,calories:2800,water:3,notes:'Modelo com maior densidade energética para performance.',meals:[{name:'Café da manhã',foods:[{name:'Aveia',qty:'60 g',kcal:228},{name:'Banana',qty:'1 un',kcal:90},{name:'Ovos',qty:'3 un',kcal:210}]},{name:'Almoço',foods:[{name:'Arroz',qty:'200 g',kcal:260},{name:'Feijão',qty:'120 g',kcal:92},{name:'Carne',qty:'180 g',kcal:360}]},{name:'Pré-treino',foods:[{name:'Pão',qty:'2 un',kcal:270},{name:'Frango',qty:'120 g',kcal:198}]},{name:'Jantar',foods:[{name:'Arroz',qty:'180 g',kcal:234},{name:'Proteína',qty:'180 g',kcal:300}]}]}
-  ];
-  function dietFromPatient(p){const d=p.diet||{};return {id:'patient-'+p.id,name:`Plano de ${p.name}`,patientId:p.id,isTemplate:false,calories:Number(d.calories||0),water:Number(d.water||0),notes:`Plano atual para ${p.goal}.`,meals:(d.meals||[]).map(m=>({name:m.name,foods:[{name:m.items||'Orientações da refeição',qty:'',kcal:0}]}))};}
-  function getDiets(){
-    let stored=[]; try{stored=JSON.parse(localStorage.getItem('labz_diets')||'[]')||[];}catch{}
-    if(!stored.length){stored=[...defaultDietTemplates,...getPatients().map(dietFromPatient)];saveDiets(stored);} return stored;
-  }
-  function saveDiets(items){localStorage.setItem('labz_diets',JSON.stringify(items));}
-  function dietPatient(d){return getPatients().find(p=>p.id===d.patientId);}
-  function dietFoodCount(d){return (d.meals||[]).reduce((s,m)=>s+(m.foods||[]).length,0);}
-  function renderDiets(filter=''){
-    const grid=document.getElementById('dietGrid'); if(!grid)return;
-    const all=getDiets(); const q=filter.toLowerCase();
-    const items=all.filter(d=>{const p=dietPatient(d);return `${d.name} ${p?.name||''} ${p?.goal||''}`.toLowerCase().includes(q);});
-    const active=all.filter(d=>!d.isTemplate); const templates=all.filter(d=>d.isTemplate);
-    document.getElementById('dietStatActive').textContent=active.length;
-    document.getElementById('dietStatTemplates').textContent=templates.length;
-    document.getElementById('dietStatCalories').textContent=`${Math.round(active.reduce((s,d)=>s+Number(d.calories||0),0)/(active.length||1))} kcal`;
-    document.getElementById('dietStatPatients').textContent=new Set(active.map(d=>d.patientId).filter(Boolean)).size;
-    grid.innerHTML=items.length?items.map(d=>{const p=dietPatient(d);return `<div class="diet-card"><div class="diet-card-head"><div><h3>${escapeHtml(d.name)}</h3><div class="diet-card-meta">${d.isTemplate?'Modelo reutilizável':`${escapeHtml(p?.name||'Sem paciente')} · ${escapeHtml(p?.goal||'')}`}</div></div>${d.isTemplate?'<span class="template-badge">TEMPLATE</span>':'<span class="status-pill ok">ATIVO</span>'}</div><div class="diet-card-stats"><div><small>Meta</small><strong>${Number(d.calories||0).toLocaleString('pt-BR')} kcal</strong></div><div><small>Refeições</small><strong>${(d.meals||[]).length}</strong></div><div><small>Alimentos</small><strong>${dietFoodCount(d)}</strong></div></div><div class="small-muted" style="min-height:38px;margin-bottom:14px;">${escapeHtml(d.notes||'Sem observações.')}</div><div class="diet-actions"><button class="mini-btn" data-diet-edit="${d.id}">Editar</button>${d.isTemplate?`<button class="mini-btn" data-diet-use="${d.id}">Usar template</button>`:`<button class="mini-btn" data-diet-patient="${d.patientId}">Abrir paciente</button>`}<button class="danger-btn" data-diet-delete="${d.id}" style="padding:7px 10px;font-size:.75rem;">Excluir</button></div></div>`}).join(''):'<div class="empty-state" style="grid-column:1/-1;">Nenhuma dieta encontrada.</div>';
-    grid.querySelectorAll('[data-diet-edit]').forEach(b=>b.addEventListener('click',()=>openDietBuilder(b.dataset.dietEdit)));
-    grid.querySelectorAll('[data-diet-use]').forEach(b=>b.addEventListener('click',()=>openDietBuilder('',b.dataset.dietUse)));
-    grid.querySelectorAll('[data-diet-patient]').forEach(b=>b.addEventListener('click',()=>openPatientProfile(b.dataset.dietPatient)));
-    grid.querySelectorAll('[data-diet-delete]').forEach(b=>b.addEventListener('click',()=>{saveDiets(getDiets().filter(d=>d.id!==b.dataset.dietDelete));renderDiets(document.getElementById('dietSearch')?.value||'');}));
-  }
-  function fillDietPatients(selected=''){const sel=document.getElementById('dietBuilderPatient');if(!sel)return;sel.innerHTML='<option value="">Nenhum — salvar como template</option>'+getPatients().map(p=>`<option value="${escapeHtml(p.id)}" ${p.id===selected?'selected':''}>${escapeHtml(p.name)}</option>`).join('');}
-  function makeDietFoodRow(food={name:'',qty:'',kcal:''}){const row=document.createElement('div');row.className='diet-food-row';row.innerHTML=`<input class="food-name" placeholder="Alimento" value="${escapeHtml(food.name||'')}"><input class="food-qty" placeholder="Quantidade" value="${escapeHtml(food.qty||'')}"><input class="food-kcal" type="number" min="0" placeholder="kcal" value="${escapeHtml(food.kcal??'')}"><button type="button" class="danger-btn remove-food" style="padding:8px 10px;">×</button>`;row.querySelector('.remove-food').addEventListener('click',()=>{row.remove();updateDietBuilderSummary();});row.querySelectorAll('input').forEach(i=>i.addEventListener('input',updateDietBuilderSummary));return row;}
-  function addDietBuilderMeal(meal={name:'',foods:[]}){const box=document.createElement('div');box.className='diet-builder-meal';box.innerHTML=`<div class="diet-builder-meal-head"><input class="builder-meal-name" style="flex:1;padding:10px;border:1px solid var(--line);border-radius:10px;" placeholder="Nome da refeição" value="${escapeHtml(meal.name||'')}"><div><button type="button" class="mini-btn add-food">+ Alimento</button> <button type="button" class="danger-btn remove-builder-meal" style="padding:7px 10px;">Remover</button></div></div><div class="diet-builder-items"></div>`;const wrap=box.querySelector('.diet-builder-items');(meal.foods?.length?meal.foods:[{}]).forEach(f=>wrap.appendChild(makeDietFoodRow(f)));box.querySelector('.add-food').addEventListener('click',()=>{wrap.appendChild(makeDietFoodRow());updateDietBuilderSummary();});box.querySelector('.remove-builder-meal').addEventListener('click',()=>{box.remove();updateDietBuilderSummary();});document.getElementById('dietBuilderMeals').appendChild(box);updateDietBuilderSummary();}
-  function updateDietBuilderSummary(){const meals=[...document.querySelectorAll('#dietBuilderMeals .diet-builder-meal')];const foods=[...document.querySelectorAll('#dietBuilderMeals .diet-food-row')];document.getElementById('dietBuilderMealCount').textContent=meals.length;document.getElementById('dietBuilderFoodCount').textContent=foods.length;const assigned=!!document.getElementById('dietBuilderPatient')?.value;document.getElementById('dietBuilderStatus').textContent=assigned?'Ativo':'Template';document.getElementById('dietBuilderProtein').textContent='Manual';}
-  function openDietBuilder(id='',templateId=''){
-    let d=id?getDiets().find(x=>x.id===id):null; if(!d&&templateId){const t=getDiets().find(x=>x.id===templateId);if(t)d={...JSON.parse(JSON.stringify(t)),id:'',name:t.name+' — cópia',isTemplate:false,patientId:''};}
-    fillDietPatients(d?.patientId||'');document.getElementById('dietBuilderTitle').textContent=d?.id?'Editar dieta':templateId?'Usar template':'Nova dieta';document.getElementById('dietBuilderId').value=d?.id||'';document.getElementById('dietBuilderName').value=d?.name||'';document.getElementById('dietBuilderCalories').value=d?.calories||'';document.getElementById('dietBuilderWater').value=d?.water||'';document.getElementById('dietBuilderNotes').value=d?.notes||'';document.getElementById('dietBuilderMeals').innerHTML='';(d?.meals?.length?d.meals:[{name:'Café da manhã',foods:[{}]},{name:'Almoço',foods:[{}]},{name:'Jantar',foods:[{}]}]).forEach(addDietBuilderMeal);updateDietBuilderSummary();openModal('dietBuilderModal');
-  }
-  document.getElementById('newDietBtn')?.addEventListener('click',()=>openDietBuilder());
-  document.getElementById('newTemplateBtn')?.addEventListener('click',()=>openDietBuilder());
-  document.getElementById('dietSearch')?.addEventListener('input',e=>renderDiets(e.target.value));
-  document.getElementById('dietBuilderAddMeal')?.addEventListener('click',()=>addDietBuilderMeal());
-  document.getElementById('dietBuilderPatient')?.addEventListener('change',updateDietBuilderSummary);
-  document.getElementById('dietBuilderForm')?.addEventListener('submit',e=>{e.preventDefault();const id=document.getElementById('dietBuilderId').value;const patientId=document.getElementById('dietBuilderPatient').value;const meals=[...document.querySelectorAll('#dietBuilderMeals .diet-builder-meal')].map(m=>({name:m.querySelector('.builder-meal-name').value.trim(),foods:[...m.querySelectorAll('.diet-food-row')].map(r=>({name:r.querySelector('.food-name').value.trim(),qty:r.querySelector('.food-qty').value.trim(),kcal:Number(r.querySelector('.food-kcal').value||0)})).filter(f=>f.name||f.qty||f.kcal)})).filter(m=>m.name||m.foods.length);const data={id:id||('d'+Date.now()),name:document.getElementById('dietBuilderName').value.trim(),patientId,isTemplate:!patientId,calories:Number(document.getElementById('dietBuilderCalories').value||0),water:Number(document.getElementById('dietBuilderWater').value||0),notes:document.getElementById('dietBuilderNotes').value.trim(),meals};const items=getDiets();const idx=items.findIndex(x=>x.id===id);if(idx>=0)items[idx]=data;else items.push(data);saveDiets(items);if(patientId){const p=getPatients().find(x=>x.id===patientId);if(p){p.diet={calories:data.calories,water:data.water,meals:data.meals.map(m=>({name:m.name,items:m.foods.map(f=>`${f.name}${f.qty?' — '+f.qty:''}`).join(', ')}))};updatePatient(p);}}document.getElementById('dietBuilderModal').classList.remove('active');renderDiets(document.getElementById('dietSearch')?.value||'');});
-
-  // ---------- AGENDA / CONSULTAS ----------
-  const isoDate = d => { const x=new Date(d); const off=x.getTimezoneOffset(); return new Date(x.getTime()-off*60000).toISOString().slice(0,10); };
-  const todayISO = () => isoDate(new Date());
-  const addDaysISO = days => { const d=new Date(); d.setDate(d.getDate()+days); return isoDate(d); };
-  const money = value => Number(value||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-  const formatDateBR = iso => { if(!iso) return '—'; const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; };
-  const defaultAppointments = () => [
-    {id:'a1',patientId:'ana',date:todayISO(),time:'14:00',type:'Retorno',status:'scheduled',value:200,notes:'Revisar adesão e medidas.'},
-    {id:'a2',patientId:'carlos',date:todayISO(),time:'15:30',type:'Avaliação',status:'scheduled',value:250,notes:'Ajustar refeições para rotina de trabalho.'},
-    {id:'a3',patientId:'julia',date:todayISO(),time:'17:00',type:'Retorno',status:'done',value:200,notes:'Acompanhamento mensal.'},
-    {id:'a4',patientId:'ana',date:addDaysISO(2),time:'10:00',type:'Online',status:'scheduled',value:180,notes:'Check-in rápido.'}
-  ];
-  function getAppointments(){
-    const raw=localStorage.getItem('labz_appointments');
-    if(!raw){const items=defaultAppointments();saveAppointments(items);return items;}
-    try{return JSON.parse(raw)||[];}catch{const items=defaultAppointments();saveAppointments(items);return items;}
-  }
-  function saveAppointments(items){localStorage.setItem('labz_appointments',JSON.stringify(items));}
-  function appointmentPatient(a){return getPatients().find(p=>p.id===a.patientId);}
-  function statusLabel(status){return status==='done'?'Concluída':status==='cancelled'?'Cancelada':'Agendada';}
-  function statusClass(status){return status==='done'?'done':status==='cancelled'?'cancelled':'scheduled';}
-  let agendaFilter='today';
-  function renderAgenda(){
-    const list=document.getElementById('agendaList'); if(!list) return;
-    const today=todayISO();
-    let items=[...getAppointments()].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
-    if(agendaFilter==='today') items=items.filter(a=>a.date===today);
-    if(agendaFilter==='upcoming') items=items.filter(a=>a.date>=today && a.status!=='cancelled');
-    const label=document.getElementById('agendaDateLabel');
-    if(label) label.textContent=agendaFilter==='today'?new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'}):`${items.length} consulta${items.length===1?'':'s'}`;
-    list.innerHTML=items.length ? items.map(a=>{const p=appointmentPatient(a);return `<div class="appointment-card"><div class="appointment-time">${escapeHtml(a.time)}<small>${formatDateBR(a.date)}</small></div><div class="appointment-main"><strong>${escapeHtml(p?.name||'Paciente removido')}</strong><span>${escapeHtml(a.type)} · ${money(a.value)}${a.notes?` · ${escapeHtml(a.notes)}`:''}</span></div><div class="appointment-actions"><span class="status-pill ${statusClass(a.status)}">${statusLabel(a.status)}</span>${a.status==='scheduled'?`<button class="mini-btn" data-appointment-done="${a.id}">Concluir</button>`:''}<button class="mini-btn" data-appointment-edit="${a.id}">Editar</button>${a.status!=='cancelled'?`<button class="mini-btn" data-appointment-cancel="${a.id}">Cancelar</button>`:''}</div></div>`}).join('') : '<div class="empty-state">Nenhuma consulta neste período.</div>';
-    list.querySelectorAll('[data-appointment-done]').forEach(b=>b.addEventListener('click',()=>updateAppointmentStatus(b.dataset.appointmentDone,'done')));
-    list.querySelectorAll('[data-appointment-cancel]').forEach(b=>b.addEventListener('click',()=>updateAppointmentStatus(b.dataset.appointmentCancel,'cancelled')));
-    list.querySelectorAll('[data-appointment-edit]').forEach(b=>b.addEventListener('click',()=>openAppointmentModal(b.dataset.appointmentEdit)));
-  }
-  function renderDashboard(){
-    const items=getAppointments(); const today=todayISO();
-    const todayItems=items.filter(a=>a.date===today && a.status!=='cancelled');
-    document.getElementById('statAppointmentsToday').textContent=todayItems.length;
-    document.getElementById('statAppointmentsDone').textContent=`${todayItems.filter(a=>a.status==='done').length} concluídas`;
-    const now=new Date(); const ym=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const revenue=items.filter(a=>a.date.startsWith(ym)&&a.status==='done').reduce((s,a)=>s+Number(a.value||0),0);
-    document.getElementById('statRevenueMonth').textContent=money(revenue);
-    const upcoming=items.filter(a=>a.date>=today&&a.status==='scheduled').sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,4);
-    const body=document.getElementById('dashboardAppointmentBody');
-    if(body) body.innerHTML=upcoming.length?upcoming.map(a=>{const p=appointmentPatient(a);return `<tr><td>${escapeHtml(p?.name||'Paciente')}</td><td>${a.date===today?'Hoje, ':formatDateBR(a.date)+' · '}${escapeHtml(a.time)}</td><td><span class="status-pill scheduled">${escapeHtml(a.type)}</span></td></tr>`}).join(''):'<tr><td colspan="3" class="dashboard-appointment-empty">Sem próximas consultas.</td></tr>';
-  }
-  function renderFinance(){
-    const items=getAppointments(); const now=new Date(); const ym=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const month=items.filter(a=>a.date.startsWith(ym) && a.status!=='cancelled');
-    const done=month.filter(a=>a.status==='done'); const pending=month.filter(a=>a.status==='scheduled');
-    const received=done.reduce((s,a)=>s+Number(a.value||0),0); const expected=pending.reduce((s,a)=>s+Number(a.value||0),0);
-    document.getElementById('financeReceived').textContent=money(received);
-    document.getElementById('financePending').textContent=money(expected);
-    document.getElementById('financePaidCount').textContent=done.length;
-    document.getElementById('financeTicket').textContent=money(done.length?received/done.length:0);
-    const body=document.getElementById('financeTableBody');
-    if(body) body.innerHTML=month.length?[...month].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).map(a=>{const p=appointmentPatient(a);return `<tr><td>${formatDateBR(a.date)} ${escapeHtml(a.time)}</td><td>${escapeHtml(p?.name||'Paciente')}</td><td>${escapeHtml(a.type)}</td><td><span class="status-pill ${statusClass(a.status)}">${statusLabel(a.status)}</span></td><td>${money(a.value)}</td></tr>`}).join(''):'<tr><td colspan="5" class="empty-state">Sem movimentações neste mês.</td></tr>';
-  }
-  function fillAppointmentPatients(selected=''){
-    const select=document.getElementById('appointmentPatient'); if(!select) return;
-    select.innerHTML='<option value="">Selecione um paciente</option>'+getPatients().map(p=>`<option value="${escapeHtml(p.id)}" ${p.id===selected?'selected':''}>${escapeHtml(p.name)}</option>`).join('');
-  }
-  function openAppointmentModal(id=''){
-    const item=id?getAppointments().find(a=>a.id===id):null;
-    fillAppointmentPatients(item?.patientId||currentPatientId||'');
-    document.getElementById('appointmentModalTitle').textContent=item?'Editar consulta':'Agendar consulta';
-    document.getElementById('appointmentId').value=item?.id||'';
-    document.getElementById('appointmentDate').value=item?.date||todayISO();
-    document.getElementById('appointmentTime').value=item?.time||'09:00';
-    document.getElementById('appointmentType').value=item?.type||'Retorno';
-    document.getElementById('appointmentValue').value=item?.value??200;
-    document.getElementById('appointmentNotes').value=item?.notes||'';
-    openModal('appointmentModal');
-  }
-  function updateAppointmentStatus(id,status){
-    const items=getAppointments(); const item=items.find(a=>a.id===id); if(!item)return; item.status=status; saveAppointments(items); renderAgenda(); renderDashboard(); renderFinance();
-  }
-  document.getElementById('newAppointmentBtn')?.addEventListener('click',()=>openAppointmentModal());
-  document.getElementById('agendaFilters')?.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{agendaFilter=btn.dataset.agendaFilter;document.querySelectorAll('#agendaFilters button').forEach(b=>b.classList.toggle('active',b===btn));renderAgenda();}));
-  document.getElementById('appointmentForm')?.addEventListener('submit',e=>{
-    e.preventDefault(); const items=getAppointments(); const id=document.getElementById('appointmentId').value;
-    const data={id:id||('a'+Date.now()),patientId:document.getElementById('appointmentPatient').value,date:document.getElementById('appointmentDate').value,time:document.getElementById('appointmentTime').value,type:document.getElementById('appointmentType').value,value:Number(document.getElementById('appointmentValue').value||0),notes:document.getElementById('appointmentNotes').value.trim(),status:'scheduled'};
-    if(id){const idx=items.findIndex(a=>a.id===id); if(idx>=0)data.status=items[idx].status||'scheduled'; if(idx>=0)items[idx]=data;} else items.push(data);
-    saveAppointments(items); document.getElementById('appointmentModal').classList.remove('active'); renderAgenda(); renderDashboard(); renderFinance();
-  });
-
-
-
-</script>
-
-<script>
-/* ===== LABZ SaaS API bridge ===== */
-const LabzAPI = {
-  token: localStorage.getItem('labz_token') || '',
-  async request(path, options = {}) {
-    const headers = {'Content-Type':'application/json', ...(options.headers || {})};
-    if (this.token) headers.Authorization = `Bearer ${this.token}`;
-    const res = await fetch('/api' + path, {...options, headers});
-    if (res.status === 204) return null;
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || 'Erro na API');
+  // ---------- LABZ FULLSTACK APP ----------
+  const $ = id => document.getElementById(id);
+  const state = { user:null, patients:[], appointments:[], diets:[], currentPatientId:null, agendaFilter:'today', dietDraftMeals:[] };
+  const api = async (path, options={}) => {
+    const res = await fetch('/api'+path,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(options.headers||{})},...options});
+    if(res.status===204) return null;
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data.error||'Erro na API');
     return data;
-  },
-  async login(email,password){
-    const data = await this.request('/auth/login',{method:'POST',body:JSON.stringify({email,password})});
-    this.token=data.token; localStorage.setItem('labz_token',data.token); return data.user;
-  },
-  async me(){ return this.request('/auth/me'); },
-  logout(){ this.token=''; localStorage.removeItem('labz_token'); },
-  patients(){ return this.request('/patients'); },
-  createPatient(data){ return this.request('/patients',{method:'POST',body:JSON.stringify(data)}); },
-  appointments(){ return this.request('/appointments'); },
-  createAppointment(data){ return this.request('/appointments',{method:'POST',body:JSON.stringify(data)}); },
-  updateAppointment(id,data){ return this.request('/appointments/'+id,{method:'PUT',body:JSON.stringify(data)}); },
-  diets(){ return this.request('/diets'); },
-  createDiet(data){ return this.request('/diets',{method:'POST',body:JSON.stringify(data)}); },
-  updateDiet(id,data){ return this.request('/diets/'+id,{method:'PUT',body:JSON.stringify(data)}); }
-};
+  };
+  const LabzAPI={
+    me:()=>api('/auth/me'),
+    login:(email,password)=>api('/auth/login',{method:'POST',body:JSON.stringify({email,password})}),
+    register:data=>api('/auth/register',{method:'POST',body:JSON.stringify(data)}),
+    updateProfile:data=>api('/auth/profile',{method:'PUT',body:JSON.stringify(data)}),
+    completeOnboarding:data=>api('/auth/onboarding',{method:'PUT',body:JSON.stringify(data)}),
+    logout:()=>api('/auth/logout',{method:'POST'}),
+    patients:()=>api('/patients'), createPatient:d=>api('/patients',{method:'POST',body:JSON.stringify(d)}), updatePatient:(id,d)=>api('/patients/'+id,{method:'PUT',body:JSON.stringify(d)}),
+    appointments:()=>api('/appointments'), createAppointment:d=>api('/appointments',{method:'POST',body:JSON.stringify(d)}), updateAppointment:(id,d)=>api('/appointments/'+id,{method:'PUT',body:JSON.stringify(d)}),
+    diets:()=>api('/diets'), createDiet:d=>api('/diets',{method:'POST',body:JSON.stringify(d)}), updateDiet:(id,d)=>api('/diets/'+id,{method:'PUT',body:JSON.stringify(d)})
+  };
+  const loginOverlay=$('loginOverlay'), appShell=$('appShell');
+  const landingNodes=[...document.body.children].filter(el=>el.id!=='loginOverlay'&&el.id!=='appShell'&&!el.classList.contains('modal-labz')&&el.tagName!=='SCRIPT');
+  const showLogin=()=>loginOverlay.classList.add('active');
+  const openModal=id=>$(id)?.classList.add('active');
+  const closeModal=id=>$(id)?.classList.remove('active');
+  const escapeHtml=(v='')=>String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const initials=(name='')=>name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+  const fmt=(v,s='')=>v===undefined||v===null||v===''?'—':`${v}${s}`;
+  const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const isoDate=d=>{const x=new Date(d);const off=x.getTimezoneOffset();return new Date(x.getTime()-off*60000).toISOString().slice(0,10)};
+  const todayISO=()=>isoDate(new Date());
+  const formatDateBR=iso=>{if(!iso)return'—';const[y,m,d]=iso.split('-');return`${d}/${m}/${y}`};
+  const statusLabel=s=>s==='done'?'Concluída':s==='cancelled'?'Cancelada':'Agendada';
+  const statusClass=s=>s==='done'?'done':s==='cancelled'?'cancelled':'scheduled';
+  const getCurrentPatient=()=>state.patients.find(p=>p.id===state.currentPatientId);
+  const patientById=id=>state.patients.find(p=>p.id===id);
 
-async function bootstrapSaaS(){
-  if(!LabzAPI.token) return;
-  try{
-    const user=await LabzAPI.me();
-    window.labzUser=user;
-    openApp();
-    await syncFromServer();
-  }catch(e){ LabzAPI.logout(); }
-}
-async function syncFromServer(){
-  try{
-    const [patients,appointments,diets]=await Promise.all([LabzAPI.patients(),LabzAPI.appointments(),LabzAPI.diets()]);
-    localStorage.setItem('labz_patients',JSON.stringify(patients));
-    localStorage.setItem('labz_appointments',JSON.stringify(appointments));
-    localStorage.setItem('labz_diets',JSON.stringify(diets));
-    renderPatients(); renderDashboard(); renderAgenda(); renderFinance();
-    if(typeof renderDiets==='function') renderDiets();
-  }catch(e){ console.error(e); }
-}
+  function switchView(view){document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));document.querySelector(`[data-view-panel="${view}"]`)?.classList.add('active');document.querySelectorAll('.app-nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));}
+  function renderCurrentUser(){
+    const u=document.querySelector('.app-user');
+    if(u&&state.user)u.innerHTML=`${escapeHtml(state.user.name)}<br><small>${escapeHtml(state.user.clinicName||'Nutricionista')}</small>`;
+    const h=document.querySelector('[data-view-panel=\"dashboard\"] .app-topbar h1');
+    if(h&&state.user)h.textContent=`Olá, ${state.user.name.split(' ')[0]}`;
+  }
+  function openApp(){landingNodes.forEach(el=>el.style.display='none');loginOverlay.classList.remove('active');appShell.classList.add('active');renderCurrentUser();}
+  function requireOnboarding(){if(state.user&&!state.user.onboardingCompleted){$('onboardingCrn').value=state.user.crn||'';$('onboardingPhone').value=state.user.phone||'';$('onboardingClinic').value=state.user.clinicName||'';openModal('onboardingModal');return true}return false}
+  function closeApp(){appShell.classList.remove('active');landingNodes.forEach(el=>el.style.display='');window.scrollTo({top:0,behavior:'smooth'});}
+  function showError(err){console.error(err);alert(err?.message||'Algo deu errado.');}
+  async function refreshAll(){
+    [state.patients,state.appointments,state.diets]=await Promise.all([LabzAPI.patients(),LabzAPI.appointments(),LabzAPI.diets()]);
+    renderPatients($('patientSearch')?.value||'');renderDiets($('dietSearch')?.value||'');renderAgenda();renderDashboard();renderFinance();
+    if(state.currentPatientId) renderPatientProfile();
+  }
 
-const originalLoginForm=document.getElementById('loginForm');
-if(originalLoginForm){
-  const fresh=originalLoginForm.cloneNode(true);
-  originalLoginForm.parentNode.replaceChild(fresh,originalLoginForm);
-  fresh.addEventListener('submit',async e=>{
+  // Auth
+  function selectAuthTab(tab){
+    document.querySelectorAll('[data-auth-tab]').forEach(b=>b.classList.toggle('active',b.dataset.authTab===tab));
+    document.querySelectorAll('[data-auth-pane]').forEach(p=>p.classList.toggle('active',p.dataset.authPane===tab));
+  }
+  document.querySelectorAll('[data-auth-tab]').forEach(b=>b.addEventListener('click',()=>selectAuthTab(b.dataset.authTab)));
+  $('openAppBtn')?.addEventListener('click',()=>{selectAuthTab('login');showLogin()});
+  $('navLoginBtn')?.addEventListener('click',()=>{selectAuthTab('login');showLogin()});
+  $('cancelLogin')?.addEventListener('click',()=>closeModal('loginOverlay'));
+  $('cancelRegister')?.addEventListener('click',()=>closeModal('loginOverlay'));
+
+  $('loginForm')?.addEventListener('submit',async e=>{
     e.preventDefault();
-    const btn=fresh.querySelector('button[type=submit]');
-    btn.disabled=true; btn.textContent='Entrando...';
+    const btn=e.currentTarget.querySelector('button[type=submit]');
+    btn.disabled=true;btn.textContent='Entrando...';
     try{
-      await LabzAPI.login(document.getElementById('loginEmail').value,document.getElementById('loginPassword').value);
-      openApp(); await syncFromServer();
-    }catch(err){ alert(err.message); }
-    finally{ btn.disabled=false; btn.textContent='Entrar'; }
+      const r=await LabzAPI.login($('loginEmail').value,$('loginPassword').value);
+      state.user=r.user;openApp();if(!requireOnboarding())await refreshAll();
+    }catch(err){showError(err)}
+    finally{btn.disabled=false;btn.textContent='Entrar'}
   });
-}
-const logoutBtn=document.getElementById('logoutBtn');
-if(logoutBtn){
-  const fresh=logoutBtn.cloneNode(true); logoutBtn.parentNode.replaceChild(fresh,logoutBtn);
-  fresh.addEventListener('click',()=>{LabzAPI.logout(); location.reload();});
-}
-bootstrapSaaS();
+
+  $('registerForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const password=$('registerPassword').value;
+    if(password!==$('registerPasswordConfirm').value) return showError(new Error('As senhas não coincidem'));
+    const btn=e.currentTarget.querySelector('button[type=submit]');
+    btn.disabled=true;btn.textContent='Criando conta...';
+    try{
+      const r=await LabzAPI.register({
+        name:$('registerName').value.trim(),
+        email:$('registerEmail').value.trim(),
+        password,
+        crn:$('registerCrn').value.trim(),
+        phone:$('registerPhone').value.trim(),
+        clinicName:$('registerClinic').value.trim()
+      });
+      state.user=r.user;
+      e.currentTarget.reset();
+      openApp();
+      requireOnboarding();
+    }catch(err){showError(err)}
+    finally{btn.disabled=false;btn.textContent='Criar conta'}
+  });
+
+  $('onboardingForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const btn=e.currentTarget.querySelector('button[type=submit]');
+    btn.disabled=true;btn.textContent='Preparando seu espaço...';
+    try{
+      const r=await LabzAPI.completeOnboarding({
+        crn:$('onboardingCrn').value.trim(),phone:$('onboardingPhone').value.trim(),clinicName:$('onboardingClinic').value.trim(),
+        serviceMode:$('onboardingMode').value,consultationMinutes:Number($('onboardingDuration').value),
+        defaultConsultationValue:Number($('onboardingValue').value),city:$('onboardingCity').value.trim(),state:$('onboardingState').value.trim()
+      });
+      state.user=r.user;renderCurrentUser();closeModal('onboardingModal');await refreshAll();
+    }catch(err){showError(err)}
+    finally{btn.disabled=false;btn.textContent='Concluir e ir para o dashboard'}
+  });
+
+  $('accountBtn')?.addEventListener('click',()=>{
+    if(!state.user)return;
+    $('accountName').value=state.user.name||'';
+    $('accountCrn').value=state.user.crn||'';
+    $('accountPhone').value=state.user.phone||'';
+    $('accountClinic').value=state.user.clinicName||'';
+    $('accountEmail').textContent=state.user.email||'';
+    openModal('accountModal');
+  });
+
+  $('accountForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const btn=e.currentTarget.querySelector('button[type=submit]');
+    btn.disabled=true;btn.textContent='Salvando...';
+    try{
+      const r=await LabzAPI.updateProfile({
+        name:$('accountName').value.trim(),
+        crn:$('accountCrn').value.trim(),
+        phone:$('accountPhone').value.trim(),
+        clinicName:$('accountClinic').value.trim()
+      });
+      state.user=r.user;
+      renderCurrentUser();
+      closeModal('accountModal');
+    }catch(err){showError(err)}
+    finally{btn.disabled=false;btn.textContent='Salvar perfil'}
+  });
+
+  $('logoutBtn')?.addEventListener('click',async()=>{try{await LabzAPI.logout()}finally{state.user=null;closeApp()}});
+  (async()=>{try{state.user=await LabzAPI.me();openApp();if(!requireOnboarding())await refreshAll()}catch{}})();
+
+  // Navigation & generic modal close
+  document.querySelectorAll('.app-nav button').forEach(btn=>btn.addEventListener('click',()=>{switchView(btn.dataset.view);if(btn.dataset.view==='diets')renderDiets();if(btn.dataset.view==='agenda')renderAgenda();if(btn.dataset.view==='dashboard')renderDashboard();if(btn.dataset.view==='finance')renderFinance();}));
+  document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.closeModal)));
+
+  // Patients
+  function renderPatients(filter=''){
+    const tbody=$('patientTableBody');if(!tbody)return;const q=filter.toLowerCase();const items=state.patients.filter(p=>(`${p.name} ${p.goal||''}`).toLowerCase().includes(q));
+    tbody.innerHTML=items.length?items.map(p=>`<tr><td><button class="patient-name-btn" data-patient-id="${p.id}">${escapeHtml(p.name)}</button></td><td>${escapeHtml(p.goal||'—')}</td><td>${escapeHtml(p.start||'—')}</td><td><span class="status-pill ${p.adherence>=70?'ok':''}">${p.adherence||0}%</span></td></tr>`).join(''):'<tr><td colspan="4" class="empty-state">Nenhum paciente encontrado.</td></tr>';
+    $('statPatients').textContent=state.patients.length;tbody.querySelectorAll('[data-patient-id]').forEach(b=>b.addEventListener('click',()=>openPatientProfile(b.dataset.patientId)));
+  }
+  $('patientSearch')?.addEventListener('input',e=>renderPatients(e.target.value));
+  $('patientDetailsForm')?.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const p=getCurrentPatient();if(!p)return;
+    const btn=document.querySelector('button[form="patientDetailsForm"]');
+    if(btn){btn.disabled=true;btn.textContent='Salvando...';}
+    try{
+      await LabzAPI.updatePatient(p.id,{
+        name:$('detailPatientName').value.trim(),
+        goal:$('detailPatientGoal').value.trim(),
+        email:$('detailPatientEmail').value.trim(),
+        phone:$('detailPatientPhone').value.trim(),
+        adherence:Number($('detailPatientAdherence').value||0),
+        currentWeight:$('detailPatientWeight').value===''?null:Number($('detailPatientWeight').value),
+        notes:$('detailPatientNotes').value.trim()
+      });
+      await refreshAll();
+    }catch(err){showError(err)}
+    finally{if(btn){btn.disabled=false;btn.textContent='Salvar detalhes';}}
+  });
+  const newPatient=()=>{ $('patientForm').reset();$('patientAdherence').value=0;openModal('patientModal') };
+  $('newPatientBtn')?.addEventListener('click',newPatient);$('quickPatientBtn')?.addEventListener('click',newPatient);$('cancelPatient')?.addEventListener('click',()=>closeModal('patientModal'));
+  $('patientForm')?.addEventListener('submit',async e=>{e.preventDefault();try{await LabzAPI.createPatient({name:$('patientName').value.trim(),goal:$('patientGoal').value.trim(),adherence:Number($('patientAdherence').value||0)});closeModal('patientModal');await refreshAll()}catch(err){showError(err)}});
+  $('backToPatients')?.addEventListener('click',()=>switchView('patients'));
+  function openPatientProfile(id){state.currentPatientId=id;switchView('patientProfile');renderPatientProfile();window.scrollTo({top:0,behavior:'smooth'});}
+  function renderPatientProfile(){
+    const p=getCurrentPatient();if(!p)return;$('profileAvatar').textContent=initials(p.name);$('profileName').textContent=p.name;$('profileGoal').textContent=p.goal||'—';$('profileStart').textContent=p.start||'—';
+    $('detailPatientName').value=p.name||'';$('detailPatientGoal').value=p.goal||'';$('detailPatientEmail').value=p.email||'';$('detailPatientPhone').value=p.phone||'';$('detailPatientAdherence').value=p.adherence??0;$('detailPatientWeight').value=p.currentWeight??'';$('detailPatientNotes').value=p.notes||'';
+    const measures=Array.isArray(p.measures)?p.measures:[];const latest=measures.at(-1),first=measures[0];$('metricWeight').textContent=latest?fmt(latest.weight,' kg'):fmt(p.currentWeight,' kg');
+    const diff=latest&&first?Number(latest.weight)-Number(first.weight):null;$('metricChange').textContent=diff===null?'—':`${diff>0?'+':''}${diff.toFixed(1)} kg`;$('metricAdherence').textContent=fmt(p.adherence,'%');
+    const evs=Array.isArray(p.evolutions)?p.evolutions:[],ev=evs.at(-1);$('lastEvolution').textContent=ev?`${ev.date} — ${ev.notes||'Sem observações.'}`:'Nenhuma evolução registrada.';
+    const a=p.anamnesis||{};$('anamnesisSummary').textContent=[a.complaint,a.allergies&&`Alergias/intolerâncias: ${a.allergies}`].filter(Boolean).join('\n\n')||'Nenhuma anamnese registrada.';
+    $('anamnesisFull').textContent=[['Queixa principal / objetivo',a.complaint],['Histórico clínico',a.history],['Alergias / intolerâncias',a.allergies],['Medicamentos / suplementos',a.meds],['Rotina e observações',a.routine]].filter(x=>x[1]).map(x=>`${x[0]}\n${x[1]}`).join('\n\n')||'Nenhuma anamnese registrada.';
+    $('evolutionTimeline').innerHTML=evs.length?[...evs].reverse().map(e=>`<div class="timeline-item"><div class="date">${escapeHtml(e.date)}</div><div><strong>${escapeHtml(e.notes||'Sem observações')}</strong><div class="small-muted">Peso: ${fmt(e.weight,' kg')}</div></div><span class="status-pill ${Number(e.adherence)>=70?'ok':''}">${fmt(e.adherence,'%')}</span></div>`).join(''):'<div class="empty-state">Nenhuma evolução registrada.</div>';
+    $('measureTableBody').innerHTML=measures.length?[...measures].reverse().map(m=>`<tr><td>${escapeHtml(m.date)}</td><td>${fmt(m.weight,' kg')}</td><td>${fmt(m.waist,' cm')}</td><td>${fmt(m.hip,' cm')}</td><td>${fmt(m.fat,'%')}</td></tr>`).join(''):'<tr><td colspan="5" class="empty-state">Nenhuma medição registrada.</td></tr>';
+    const d=state.diets.find(d=>d.patientId===p.id&&!d.isTemplate);$('dietPreview').innerHTML=d?`<div class="profile-grid" style="margin-bottom:16px;"><div class="metric-card"><small>Meta calórica</small><strong>${fmt(d.calories,' kcal')}</strong></div><div class="metric-card"><small>Água</small><strong>${fmt(d.water,' L')}</strong></div></div>${(d.meals||[]).map(m=>`<div class="diet-meal"><div class="diet-meal-head"><h4>${escapeHtml(m.name)}</h4></div><div class="small-muted">${escapeHtml((m.foods||[]).map(f=>`${f.name}${f.qty?' — '+f.qty:''}`).join(', ')||m.items||'')}</div></div>`).join('')}`:'<div class="empty-state">Nenhum plano alimentar cadastrado.</div>';
+  }
+  document.querySelectorAll('#profileTabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#profileTabs button').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.profile-panel').forEach(p=>p.classList.toggle('active',p.dataset.profilePanel===btn.dataset.profileTab));}));
+  $('editAnamnesisBtn')?.addEventListener('click',()=>{const a=getCurrentPatient()?.anamnesis||{};$('anamnesisComplaint').value=a.complaint||'';$('anamnesisHistory').value=a.history||'';$('anamnesisAllergies').value=a.allergies||'';$('anamnesisMeds').value=a.meds||'';$('anamnesisRoutine').value=a.routine||'';openModal('anamnesisModal')});
+  $('anamnesisForm')?.addEventListener('submit',async e=>{e.preventDefault();const p=getCurrentPatient();try{await LabzAPI.updatePatient(p.id,{anamnesis:{complaint:$('anamnesisComplaint').value.trim(),history:$('anamnesisHistory').value.trim(),allergies:$('anamnesisAllergies').value.trim(),meds:$('anamnesisMeds').value.trim(),routine:$('anamnesisRoutine').value.trim()}});closeModal('anamnesisModal');await refreshAll()}catch(err){showError(err)}});
+  const openEvolution=()=>{const p=getCurrentPatient();$('evolutionForm').reset();$('evolutionAdherence').value=p?.adherence||0;openModal('evolutionModal')};$('newEvolutionBtn')?.addEventListener('click',openEvolution);$('newEvolutionBtn2')?.addEventListener('click',openEvolution);
+  $('evolutionForm')?.addEventListener('submit',async e=>{e.preventDefault();const p=getCurrentPatient(),items=[...(p.evolutions||[])];const weight=Number($('evolutionWeight').value),adherence=Number($('evolutionAdherence').value);items.push({date:new Date().toLocaleDateString('pt-BR'),weight,adherence,notes:$('evolutionNotes').value.trim()});try{await LabzAPI.updatePatient(p.id,{evolutions:items,currentWeight:weight,adherence});closeModal('evolutionModal');await refreshAll()}catch(err){showError(err)}});
+  $('newMeasureBtn')?.addEventListener('click',()=>{$('measureForm').reset();openModal('measureModal')});
+  $('measureForm')?.addEventListener('submit',async e=>{e.preventDefault();const p=getCurrentPatient(),items=[...(p.measures||[])];const weight=Number($('measureWeight').value);items.push({date:new Date().toLocaleDateString('pt-BR'),weight,waist:$('measureWaist').value?Number($('measureWaist').value):'',hip:$('measureHip').value?Number($('measureHip').value):'',fat:$('measureFat').value?Number($('measureFat').value):''});try{await LabzAPI.updatePatient(p.id,{measures:items,currentWeight:weight});closeModal('measureModal');await refreshAll()}catch(err){showError(err)}});
+
+  // Diets
+  function renderDiets(filter=''){
+    const q=filter.toLowerCase();const items=state.diets.filter(d=>{const p=patientById(d.patientId);return(`${d.name} ${d.notes||''} ${p?.name||''} ${p?.goal||''}`).toLowerCase().includes(q)});const active=state.diets.filter(d=>!d.isTemplate),templates=state.diets.filter(d=>d.isTemplate);$('dietStatActive').textContent=active.length;$('dietStatTemplates').textContent=templates.length;$('dietStatCalories').textContent=`${Math.round(active.reduce((s,d)=>s+Number(d.calories||0),0)/(active.length||1))} kcal`;$('dietStatPatients').textContent=new Set(active.map(d=>d.patientId).filter(Boolean)).size;
+    $('dietGrid').innerHTML=items.length?items.map(d=>{const p=patientById(d.patientId);return`<div class="diet-card"><div class="diet-card-top"><div><div class="diet-card-badge">${d.isTemplate?'Template':'Plano ativo'}</div><h3>${escapeHtml(d.name)}</h3><div class="small-muted">${d.isTemplate?'Reutilizável':escapeHtml(p?.name||'Sem paciente')}</div></div><strong>${fmt(d.calories,' kcal')}</strong></div><div class="small-muted" style="margin:12px 0;">${escapeHtml(d.notes||'Sem observações')}</div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="mini-btn" data-diet-edit="${d.id}">Editar</button>${d.isTemplate?`<button class="mini-btn" data-diet-use="${d.id}">Usar template</button>`:''}</div></div>`}).join(''):'<div class="empty-state">Nenhuma dieta encontrada.</div>';
+    $('dietGrid').querySelectorAll('[data-diet-edit]').forEach(b=>b.addEventListener('click',()=>openDietBuilder(b.dataset.dietEdit)));$('dietGrid').querySelectorAll('[data-diet-use]').forEach(b=>b.addEventListener('click',()=>openDietBuilder('',b.dataset.dietUse)));
+  }
+  $('dietSearch')?.addEventListener('input',e=>renderDiets(e.target.value));
+  function fillDietPatients(selected=''){const s=$('dietBuilderPatient');s.innerHTML='<option value="">Sem paciente / template</option>'+state.patients.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+  function addDietMeal(meal={name:'',foods:[]}){state.dietDraftMeals.push({name:meal.name||'',foods:Array.isArray(meal.foods)?meal.foods.map(f=>({...f})):(meal.items?[{name:meal.items,qty:'',kcal:''}]:[])});renderDietDraft()}
+  function renderDietDraft(){const box=$('dietBuilderMeals');box.innerHTML=state.dietDraftMeals.map((m,mi)=>`<div class="diet-meal" data-meal="${mi}"><div class="diet-meal-head"><input class="meal-name-input" value="${escapeHtml(m.name)}" placeholder="Nome da refeição"><button type="button" class="mini-btn" data-remove-meal="${mi}">Remover</button></div><div>${m.foods.map((f,fi)=>`<div class="food-row"><input value="${escapeHtml(f.name||'')}" placeholder="Alimento" data-food-name="${mi}:${fi}"><input value="${escapeHtml(f.qty||'')}" placeholder="Quantidade" data-food-qty="${mi}:${fi}"><input value="${escapeHtml(f.kcal||'')}" type="number" placeholder="kcal" data-food-kcal="${mi}:${fi}"><button type="button" class="mini-btn" data-remove-food="${mi}:${fi}">×</button></div>`).join('')}</div><button type="button" class="mini-btn" data-add-food="${mi}">+ alimento</button></div>`).join('');$('dietBuilderMealCount').textContent=state.dietDraftMeals.length;$('dietBuilderFoodCount').textContent=state.dietDraftMeals.reduce((s,m)=>s+m.foods.length,0);$('dietBuilderStatus').textContent=$('dietBuilderPatient').value?'Ativo':'Template';
+    box.querySelectorAll('.meal-name-input').forEach((el,i)=>el.addEventListener('input',()=>state.dietDraftMeals[i].name=el.value));box.querySelectorAll('[data-add-food]').forEach(b=>b.addEventListener('click',()=>{state.dietDraftMeals[+b.dataset.addFood].foods.push({name:'',qty:'',kcal:''});renderDietDraft()}));box.querySelectorAll('[data-remove-meal]').forEach(b=>b.addEventListener('click',()=>{state.dietDraftMeals.splice(+b.dataset.removeMeal,1);renderDietDraft()}));box.querySelectorAll('[data-remove-food]').forEach(b=>b.addEventListener('click',()=>{const[m,f]=b.dataset.removeFood.split(':').map(Number);state.dietDraftMeals[m].foods.splice(f,1);renderDietDraft()}));['name','qty','kcal'].forEach(k=>box.querySelectorAll(`[data-food-${k}]`).forEach(el=>el.addEventListener('input',()=>{const[m,f]=el.dataset['food'+k[0].toUpperCase()+k.slice(1)].split(':').map(Number);state.dietDraftMeals[m].foods[f][k]=el.value})));}
+  function openDietBuilder(id='',templateId=''){const src=id?state.diets.find(d=>d.id===id):templateId?state.diets.find(d=>d.id===templateId):null;$('dietBuilderId').value=id||'';$('dietBuilderTitle').textContent=id?'Editar dieta':templateId?'Novo plano a partir do template':'Nova dieta';$('dietBuilderName').value=src?.name||'';$('dietBuilderCalories').value=src?.calories||'';$('dietBuilderWater').value=src?.water||'';$('dietBuilderNotes').value=src?.notes||'';fillDietPatients(id?src?.patientId||'':state.currentPatientId||'');state.dietDraftMeals=(src?.meals||[]).map(m=>({name:m.name||'',foods:(m.foods||[]).map(f=>({...f}))}));if(!state.dietDraftMeals.length)addDietMeal();else renderDietDraft();openModal('dietBuilderModal')}
+  $('newDietBtn')?.addEventListener('click',()=>openDietBuilder());$('newTemplateBtn')?.addEventListener('click',()=>{state.currentPatientId=null;openDietBuilder()});$('dietBuilderAddMeal')?.addEventListener('click',()=>addDietMeal());$('dietBuilderPatient')?.addEventListener('change',renderDietDraft);
+  $('dietBuilderForm')?.addEventListener('submit',async e=>{e.preventDefault();const id=$('dietBuilderId').value;const data={name:$('dietBuilderName').value.trim(),patientId:$('dietBuilderPatient').value||null,calories:Number($('dietBuilderCalories').value||0),water:$('dietBuilderWater').value?Number($('dietBuilderWater').value):null,notes:$('dietBuilderNotes').value.trim(),isTemplate:!$('dietBuilderPatient').value,meals:state.dietDraftMeals};try{id?await LabzAPI.updateDiet(id,data):await LabzAPI.createDiet(data);closeModal('dietBuilderModal');await refreshAll()}catch(err){showError(err)}});
+  $('editDietBtn')?.addEventListener('click',()=>{const d=state.diets.find(d=>d.patientId===state.currentPatientId&&!d.isTemplate);openDietBuilder(d?.id||'')});
+
+  // Agenda & finance
+  function renderAgenda(){let items=[...state.appointments].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)),today=todayISO();if(state.agendaFilter==='today')items=items.filter(a=>a.date===today);if(state.agendaFilter==='upcoming')items=items.filter(a=>a.date>=today&&a.status!=='cancelled');$('agendaDateLabel').textContent=state.agendaFilter==='today'?new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'}):`${items.length} consultas`;$('agendaList').innerHTML=items.length?items.map(a=>`<div class="appointment-card"><div class="appointment-time">${escapeHtml(a.time)}<small>${formatDateBR(a.date)}</small></div><div class="appointment-main"><strong>${escapeHtml(patientById(a.patientId)?.name||a.patientName||'Paciente')}</strong><span>${escapeHtml(a.type)} · ${money(a.value)}${a.notes?` · ${escapeHtml(a.notes)}`:''}</span></div><div class="appointment-actions"><span class="status-pill ${statusClass(a.status)}">${statusLabel(a.status)}</span>${a.status==='scheduled'?`<button class="mini-btn" data-done="${a.id}">Concluir</button>`:''}<button class="mini-btn" data-edit="${a.id}">Editar</button>${a.status!=='cancelled'?`<button class="mini-btn" data-cancel="${a.id}">Cancelar</button>`:''}</div></div>`).join(''):'<div class="empty-state">Nenhuma consulta neste período.</div>';$('agendaList').querySelectorAll('[data-done]').forEach(b=>b.addEventListener('click',()=>updateAppointmentStatus(b.dataset.done,'done')));$('agendaList').querySelectorAll('[data-cancel]').forEach(b=>b.addEventListener('click',()=>updateAppointmentStatus(b.dataset.cancel,'cancelled')));$('agendaList').querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openAppointmentModal(b.dataset.edit)))}
+  function renderDashboard(){const today=todayISO(),todayItems=state.appointments.filter(a=>a.date===today&&a.status!=='cancelled');$('statAppointmentsToday').textContent=todayItems.length;$('statAppointmentsDone').textContent=`${todayItems.filter(a=>a.status==='done').length} concluídas`;const now=new Date(),ym=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,revenue=state.appointments.filter(a=>a.date.startsWith(ym)&&a.status==='done').reduce((s,a)=>s+Number(a.value||0),0);$('statRevenueMonth').textContent=money(revenue);const upcoming=state.appointments.filter(a=>a.date>=today&&a.status==='scheduled').sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,4);$('dashboardAppointmentBody').innerHTML=upcoming.length?upcoming.map(a=>`<tr><td>${escapeHtml(patientById(a.patientId)?.name||a.patientName||'Paciente')}</td><td>${a.date===today?'Hoje, ':formatDateBR(a.date)+' · '}${escapeHtml(a.time)}</td><td><span class="status-pill scheduled">${escapeHtml(a.type)}</span></td></tr>`).join(''):'<tr><td colspan="3" class="dashboard-appointment-empty">Sem próximas consultas.</td></tr>'}
+  function renderFinance(){const now=new Date(),ym=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,month=state.appointments.filter(a=>a.date.startsWith(ym)&&a.status!=='cancelled'),done=month.filter(a=>a.status==='done'),pending=month.filter(a=>a.status==='scheduled'),received=done.reduce((s,a)=>s+Number(a.value||0),0),expected=pending.reduce((s,a)=>s+Number(a.value||0),0);$('financeReceived').textContent=money(received);$('financePending').textContent=money(expected);$('financePaidCount').textContent=done.length;$('financeTicket').textContent=money(done.length?received/done.length:0);$('financeTableBody').innerHTML=month.length?[...month].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).map(a=>`<tr><td>${formatDateBR(a.date)} ${escapeHtml(a.time)}</td><td>${escapeHtml(patientById(a.patientId)?.name||a.patientName||'Paciente')}</td><td>${escapeHtml(a.type)}</td><td><span class="status-pill ${statusClass(a.status)}">${statusLabel(a.status)}</span></td><td>${money(a.value)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty-state">Sem movimentações neste mês.</td></tr>'}
+  function fillAppointmentPatients(selected=''){const s=$('appointmentPatient');s.innerHTML='<option value="">Selecione um paciente</option>'+state.patients.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+  function openAppointmentModal(id=''){const a=id?state.appointments.find(x=>x.id===id):null;fillAppointmentPatients(a?.patientId||state.currentPatientId||'');$('appointmentModalTitle').textContent=a?'Editar consulta':'Agendar consulta';$('appointmentId').value=a?.id||'';$('appointmentDate').value=a?.date||todayISO();$('appointmentTime').value=a?.time||'09:00';$('appointmentType').value=a?.type||'Retorno';$('appointmentValue').value=a?.value??200;$('appointmentNotes').value=a?.notes||'';openModal('appointmentModal')}
+  async function updateAppointmentStatus(id,status){try{await LabzAPI.updateAppointment(id,{status});await refreshAll()}catch(err){showError(err)}}
+  $('newAppointmentBtn')?.addEventListener('click',()=>openAppointmentModal());$('agendaFilters')?.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{state.agendaFilter=btn.dataset.agendaFilter;document.querySelectorAll('#agendaFilters button').forEach(b=>b.classList.toggle('active',b===btn));renderAgenda()}));
+  $('appointmentForm')?.addEventListener('submit',async e=>{e.preventDefault();const id=$('appointmentId').value,old=state.appointments.find(a=>a.id===id);const data={patientId:$('appointmentPatient').value,date:$('appointmentDate').value,time:$('appointmentTime').value,type:$('appointmentType').value,value:Number($('appointmentValue').value||0),notes:$('appointmentNotes').value.trim(),status:old?.status||'scheduled'};try{id?await LabzAPI.updateAppointment(id,data):await LabzAPI.createAppointment(data);closeModal('appointmentModal');await refreshAll()}catch(err){showError(err)}});
+
 </script>
+
 
 </body>
 </html>
